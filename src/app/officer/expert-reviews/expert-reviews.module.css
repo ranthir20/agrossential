@@ -804,3 +804,63 @@ body {
     padding: 22px 16px 32px;
   }
 }
+/* Farmer review request modal */
+
+.modal p {
+  margin: 10px 0;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.modal p strong {
+  color: #1f2937;
+}
+
+.modal textarea {
+  width: 100%;
+  margin-top: 18px;
+  padding: 14px;
+  box-sizing: border-box;
+  border: 1px solid #d7dde0;
+  border-radius: 14px;
+  background: #fafcfb;
+  color: #1f2937;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+}
+
+.modal textarea:focus {
+  border-color: #8fc5a2;
+  box-shadow: 0 0 0 3px rgba(35, 112, 68, 0.08);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modalActions button {
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modalActions button:first-child {
+  border: 1px solid #d7dde0;
+  background: white;
+  color: #475569;
+}
+
+.modalActions button:last-child {
+  border: none;
+  background: #205d3a;
+  color: white;
+}

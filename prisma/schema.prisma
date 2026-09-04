@@ -25,15 +25,16 @@ model Crop {
 }
 
 model DiseaseReport {
-  id               String            @id
-  cropId           String
-  imageUrl         String?
-  predictedDisease String
-  confidence       Float?
-  status           ReportStatus      @default(PENDING)
-  createdAt        DateTime          @default(now())
-  Crop             Crop              @relation(fields: [cropId], references: [id])
-  ExpertValidation ExpertValidation?
+  id                  String                @id
+  cropId              String
+  imageUrl            String?
+  predictedDisease    String
+  confidence          Float?
+  status              ReportStatus          @default(PENDING)
+  createdAt           DateTime              @default(now())
+  Crop                Crop                  @relation(fields: [cropId], references: [id])
+  ExpertReviewRequest ExpertReviewRequest[]
+  ExpertValidation    ExpertValidation?
 
   @@index([cropId])
 }
@@ -84,16 +85,18 @@ model RiskAssessment {
 }
 
 model User {
-  id               String             @id
-  clerkId          String?            @unique
-  name             String
-  email            String             @unique
-  phone            String?
-  role             Role               @default(FARMER)
-  language         String             @default("en")
-  createdAt        DateTime           @default(now())
-  ExpertValidation ExpertValidation[]
-  Farm             Farm[]
+  id                   String                @id
+  clerkId              String?               @unique
+  name                 String
+  email                String                @unique
+  phone                String?
+  role                 Role                  @default(FARMER)
+  language             String                @default("en")
+  createdAt            DateTime              @default(now())
+  ExpertReviewRequests ExpertReviewRequest[] @relation("ExpertReviewRequests")
+  FarmerReviewRequests ExpertReviewRequest[] @relation("FarmerReviewRequests")
+  ExpertValidation     ExpertValidation[]
+  Farm                 Farm[]
 }
 
 model WeatherData {
@@ -106,6 +109,26 @@ model WeatherData {
   Farm        Farm     @relation(fields: [farmId], references: [id])
 
   @@unique([farmId, date])
+}
+
+model ExpertReviewRequest {
+  id            String              @id
+  reportId      String
+  farmerId      String
+  question      String
+  response      String?
+  expertId      String?
+  status        ReviewRequestStatus @default(PENDING)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  Expert        User?               @relation("ExpertReviewRequests", fields: [expertId], references: [id])
+  Farmer        User                @relation("FarmerReviewRequests", fields: [farmerId], references: [id])
+  DiseaseReport DiseaseReport       @relation(fields: [reportId], references: [id])
+
+  @@index([reportId])
+  @@index([farmerId])
+  @@index([expertId])
+  @@index([status])
 }
 
 enum ReportStatus {
@@ -124,4 +147,10 @@ enum ValidationDecision {
   CONFIRMED
   REJECTED
   UNCERTAIN
+}
+
+enum ReviewRequestStatus {
+  PENDING
+  IN_REVIEW
+  COMPLETED
 }
