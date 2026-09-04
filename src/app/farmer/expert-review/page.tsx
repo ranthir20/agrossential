@@ -4,321 +4,475 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import FarmerHeader from "@/components/farmer/FarmerHeader";
 
-type Review = {
+const DEMO_FARMER_ID = "test-farmer";
+
+type ReviewRequest = {
   id: string;
-  farm: string;
-  crop: string;
-  disease: string;
-  confidence: number;
+  reportId: string;
+  farmerId: string;
+  expertId: string | null;
   question: string;
-  status: "Pending" | "In Review" | "Completed";
-  expert?: string;
-  advice?: string;
+  response: string | null;
+  status: "PENDING" | "IN_REVIEW" | "COMPLETED";
   createdAt: string;
+  Expert: {
+    name: string;
+  } | null;
+  DiseaseReport: {
+    predictedDisease: string;
+    confidence: number | null;
+    Crop: {
+      crop: string;
+      Farm: {
+        farmName: string;
+        district: string | null;
+        state: string | null;
+      };
+    };
+  };
 };
 
-const demoReviews: Review[] = [
-  {
-    id: "review-demo-1",
-    farm: "Main Farm",
-    crop: "Cotton",
-    disease: "Cotton Leaf Curl Virus",
-    confidence: 87,
-    question:
-      "Please confirm whether the symptoms shown in my crop scan require further treatment.",
-    status: "Completed",
-    expert: "Agriculture Expert",
-    advice:
-      "Continue monitoring affected plants and remove severely affected plants where appropriate. Avoid unnecessary chemical application and follow local agricultural guidance.",
-    createdAt: "Yesterday",
-  },
-];
-
 export default function ExpertReviewPage() {
-  const [reviews, setReviews] = useState<Review[]>(demoReviews);
-  const [showForm, setShowForm] = useState(false);
-  const [question, setQuestion] = useState("");
-  const [scan, setScan] = useState<{
-    farmName?: string;
-    crop?: string;
-    disease?: string;
-    confidence?: number;
-  } | null>(null);
+  const [reportId, setReportId] =
+    useState("");
 
-  useEffect(() => {
-    const savedScan = localStorage.getItem("agrossential-current-scan");
+  const [question, setQuestion] =
+    useState("");
 
-    if (savedScan) {
-      try {
-        setScan(JSON.parse(savedScan));
-      } catch {
-        setScan(null);
+  const [requests, setRequests] =
+    useState<ReviewRequest[]>([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [submitting, setSubmitting] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  const loadRequests = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await fetch(
+        `/api/expert-review-requests?farmerId=${DEMO_FARMER_ID}`,
+        {
+          cache: "no-store",
+        }
+      );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+            "Failed to load expert reviews"
+        );
       }
+
+      setRequests(data);
+    } catch (err) {
+      console.error(err);
+
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to load expert reviews."
+      );
+    } finally {
+      setLoading(false);
     }
-
-    const savedReviews = localStorage.getItem("agrossential-expert-reviews");
-
-    if (savedReviews) {
-      try {
-        setReviews(JSON.parse(savedReviews));
-      } catch {
-        setReviews(demoReviews);
-      }
-    }
-  }, []);
-
-  const submitReview = () => {
-    if (!question.trim()) return;
-
-    const newReview: Review = {
-      id: `review-${Date.now()}`,
-      farm: scan?.farmName || "Main Farm",
-      crop: scan?.crop || "Cotton",
-      disease: scan?.disease || "Crop health issue",
-      confidence: scan?.confidence ?? 87,
-      question: question.trim(),
-      status: "Pending",
-      createdAt: "Just now",
-    };
-
-    const updatedReviews = [newReview, ...reviews];
-
-    setReviews(updatedReviews);
-    localStorage.setItem(
-      "agrossential-expert-reviews",
-      JSON.stringify(updatedReviews)
-    );
-
-    setQuestion("");
-    setShowForm(false);
   };
 
-  const statusStyle = (status: Review["status"]) => {
-    if (status === "Completed") {
-      return "bg-green-100 text-green-700";
+  useEffect(() => {
+    const currentScan =
+      localStorage.getItem(
+        "agrossential-current-scan"
+      );
+
+    if (currentScan) {
+      try {
+        const parsed =
+          JSON.parse(currentScan);
+
+        if (parsed?.id) {
+          setReportId(parsed.id);
+        } else if (
+          parsed?.reportId
+        ) {
+          setReportId(
+            parsed.reportId
+          );
+        }
+      } catch {
+        setReportId(currentScan);
+      }
     }
 
-    if (status === "In Review") {
-      return "bg-blue-100 text-blue-700";
+    loadRequests();
+  }, []);
+
+  const submitQuestion = async (
+    e: React.FormEvent
+  ) => {
+    e.preventDefault();
+
+    if (!reportId) {
+      setError(
+        "Please open a disease scan before asking an Agricultural Expert."
+      );
+      return;
     }
 
-    return "bg-orange-100 text-orange-700";
+    if (!question.trim()) {
+      setError(
+        "Please enter your question."
+      );
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setError("");
+
+      const response = await fetch(
+        "/api/expert-review-requests",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            reportId,
+            farmerId:
+              DEMO_FARMER_ID,
+            question:
+              question.trim(),
+          }),
+        }
+      );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+            "Failed to submit question"
+        );
+      }
+
+      setQuestion("");
+
+      await loadRequests();
+    } catch (err) {
+      console.error(err);
+
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to submit question."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       <FarmerHeader />
 
-      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mb-6">
-          <Link
-            href="/farmer/results"
-            className="text-sm font-semibold text-green-700 hover:text-green-800"
-          >
-            ← Back to Scan Result
-          </Link>
+      <main className="mx-auto w-full max-w-6xl px-6 py-10">
+        <div className="mb-8">
+          <p className="text-sm font-bold tracking-wide text-green-700">
+            AGRICULTURAL EXPERT SUPPORT
+          </p>
 
-          <div className="mt-4">
-            <h1 className="text-2xl font-bold text-gray-900">
-              👨‍🌾 Expert Review
-            </h1>
-            <p className="mt-1 text-sm text-gray-500">
-              Get an expert opinion when the AI result needs confirmation.
-            </p>
-          </div>
+          <h1 className="mt-2 text-3xl font-bold text-slate-900">
+            Expert Review
+          </h1>
+
+          <p className="mt-2 max-w-2xl text-slate-600">
+            Ask an Agricultural Expert about
+            your crop disease detection and
+            receive field-ready guidance.
+          </p>
         </div>
 
-        {/* Current scan */}
-        <section className="rounded-2xl border border-green-100 bg-white p-5 shadow-sm">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-green-700">
+        {error && (
+          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
+            {error}
+          </div>
+        )}
+
+        <div className="grid gap-6 lg:grid-cols-3">
+          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-slate-900">
+                Ask an Agricultural Expert
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-500">
+                Your question will be linked to
+                the current disease scan.
+              </p>
+            </div>
+
+            <div className="mb-5 rounded-xl bg-green-50 p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-green-700">
                 Current Scan
               </p>
 
-              <h2 className="mt-1 text-xl font-bold text-gray-900">
-                {scan?.crop || "Cotton"} —{" "}
-                {scan?.disease || "Cotton Leaf Curl Virus"}
+              <p className="mt-1 break-all text-sm font-semibold text-slate-800">
+                {reportId ||
+                  "No scan selected"}
+              </p>
+            </div>
+
+            <form
+              onSubmit={submitQuestion}
+            >
+              <label className="mb-2 block text-sm font-semibold text-slate-700">
+                Your Question
+              </label>
+
+              <textarea
+  value={question}
+  onChange={(e) =>
+    setQuestion(e.target.value)
+  }
+  className="w-full resize-none rounded-xl border border-slate-300 bg-white p-4 text-sm text-black outline-none transition placeholder:text-slate-400 focus:border-green-500 focus:ring-2 focus:ring-green-100"
+  rows={6}
+  placeholder="Example: What treatment should I use for this disease, and how can I prevent it from spreading?"
+/>
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="mt-4 rounded-xl bg-green-700 px-6 py-3 text-sm font-bold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {submitting
+                  ? "Submitting..."
+                  : "Ask Agricultural Expert →"}
+              </button>
+            </form>
+          </section>
+
+          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-bold text-slate-900">
+              How It Works
+            </h2>
+
+            <div className="mt-5 space-y-5">
+              <div>
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-sm font-bold text-green-700">
+                  1
+                </span>
+
+                <h3 className="mt-2 font-semibold text-slate-800">
+                  Submit Question
+                </h3>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  Ask about your crop disease
+                  or treatment.
+                </p>
+              </div>
+
+              <div>
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-sm font-bold text-green-700">
+                  2
+                </span>
+
+                <h3 className="mt-2 font-semibold text-slate-800">
+                  Expert Reviews
+                </h3>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  An Agricultural Expert
+                  reviews your question and
+                  scan.
+                </p>
+              </div>
+
+              <div>
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-sm font-bold text-green-700">
+                  3
+                </span>
+
+                <h3 className="mt-2 font-semibold text-slate-800">
+                  Receive Guidance
+                </h3>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  View the expert's response
+                  directly here.
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">
+                My Expert Reviews
               </h2>
 
-              <p className="mt-1 text-sm text-gray-500">
-                {scan?.farmName || "Main Farm"} · AI confidence{" "}
-                {scan?.confidence ?? 87}%
+              <p className="mt-1 text-sm text-slate-500">
+                Track questions submitted to
+                Agricultural Experts.
               </p>
             </div>
 
             <button
-              onClick={() => setShowForm(!showForm)}
-              className="rounded-xl bg-green-700 px-5 py-3 text-sm font-semibold text-white hover:bg-green-800"
+              onClick={loadRequests}
+              className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
             >
-              {showForm ? "Close Request" : "Ask an Expert"}
+              Refresh
             </button>
           </div>
 
-          {showForm && (
-            <div className="mt-5 border-t pt-5">
-              <label className="text-sm font-semibold text-gray-700">
-                What would you like the expert to check?
-              </label>
+          <div className="mt-6 space-y-4">
+            {loading ? (
+              <p className="text-sm text-slate-500">
+                Loading expert reviews...
+              </p>
+            ) : requests.length ===
+              0 ? (
+              <div className="rounded-xl bg-slate-50 p-6 text-center">
+                <p className="font-semibold text-slate-700">
+                  No expert reviews yet.
+                </p>
 
-              <textarea
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                placeholder="Example: Are these symptoms consistent with the detected disease? What should I monitor next?"
-                rows={4}
-                className="mt-2 w-full rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm outline-none focus:border-green-600"
-              />
-
-              <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                <button
-                  onClick={submitReview}
-                  disabled={!question.trim()}
-                  className="rounded-xl bg-green-700 px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Submit for Review
-                </button>
-
-                <Link
-                  href="/farmer/scan"
-                  className="rounded-xl border px-5 py-3 text-center text-sm font-semibold text-gray-700 hover:bg-gray-50"
-                >
-                  Upload Better Image
-                </Link>
+                <p className="mt-1 text-sm text-slate-500">
+                  Submit a question above to
+                  contact an Agricultural Expert.
+                </p>
               </div>
+            ) : (
+              requests.map(
+                (request) => (
+                  <article
+                    key={request.id}
+                    className="rounded-xl border border-slate-200 p-5"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
+                          {
+                            request
+                              .DiseaseReport
+                              .Crop
+                              .crop
+                          }
+                        </p>
 
-              <p className="mt-3 text-xs text-gray-500">
-                Expert review helps validate uncertain AI results. Do not use
-                an AI result alone to make high-risk treatment decisions.
-              </p>
-            </div>
-          )}
-        </section>
-
-        {/* How it works */}
-        <section className="mt-6 grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border bg-white p-5">
-            <div className="text-2xl">📷</div>
-            <h3 className="mt-3 font-bold text-gray-900">
-              1. Submit scan
-            </h3>
-            <p className="mt-1 text-sm leading-6 text-gray-500">
-              Send the crop scan and your question to an agriculture expert.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border bg-white p-5">
-            <div className="text-2xl">🔎</div>
-            <h3 className="mt-3 font-bold text-gray-900">
-              2. Expert validates
-            </h3>
-            <p className="mt-1 text-sm leading-6 text-gray-500">
-              The expert reviews the symptoms and provides a validated
-              assessment.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border bg-white p-5">
-            <div className="text-2xl">🌱</div>
-            <h3 className="mt-3 font-bold text-gray-900">
-              3. Farmer follows up
-            </h3>
-            <p className="mt-1 text-sm leading-6 text-gray-500">
-              Use the expert advice for monitoring and follow-up actions.
-            </p>
-          </div>
-        </section>
-
-        {/* Review history */}
-        <section className="mt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-bold text-gray-900">
-                My Expert Reviews
-              </h2>
-              <p className="mt-1 text-sm text-gray-500">
-                Track submitted questions and expert responses.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-4 space-y-4">
-            {reviews.map((review) => (
-              <article
-                key={review.id}
-                className="rounded-2xl border bg-white p-5 shadow-sm"
-              >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="font-bold text-gray-900">
-                        {review.crop} — {review.disease}
-                      </h3>
+                        <h3 className="mt-1 font-bold text-slate-900">
+                          {
+                            request
+                              .DiseaseReport
+                              .predictedDisease
+                          }
+                        </h3>
+                      </div>
 
                       <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ${statusStyle(
-                          review.status
-                        )}`}
+                        className={`rounded-full px-3 py-1 text-xs font-bold ${
+                          request.status ===
+                          "COMPLETED"
+                            ? "bg-green-100 text-green-700"
+                            : request.status ===
+                                "IN_REVIEW"
+                              ? "bg-blue-100 text-blue-700"
+                              : "bg-amber-100 text-amber-700"
+                        }`}
                       >
-                        {review.status}
+                        {
+                          request.status
+                        }
                       </span>
                     </div>
 
-                    <p className="mt-1 text-xs text-gray-500">
-                      {review.farm} · AI confidence {review.confidence}% ·{" "}
-                      {review.createdAt}
-                    </p>
-                  </div>
-                </div>
+                    <div className="mt-4 rounded-xl bg-slate-50 p-4">
+                      <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
+                        Your Question
+                      </p>
 
-                <div className="mt-4 rounded-xl bg-gray-50 p-4">
-                  <p className="text-xs font-semibold text-gray-500">
-                    Your question
-                  </p>
-                  <p className="mt-1 text-sm leading-6 text-gray-700">
-                    {review.question}
-                  </p>
-                </div>
+                      <p className="mt-2 text-sm leading-6 text-slate-700">
+                        {
+                          request.question
+                        }
+                      </p>
+                    </div>
 
-                {review.status === "Completed" && review.advice && (
-                  <div className="mt-3 rounded-xl bg-green-50 p-4">
-                    <p className="text-xs font-semibold text-green-700">
-                      Expert response
-                    </p>
-                    <p className="mt-1 text-sm leading-6 text-green-900">
-                      {review.advice}
-                    </p>
-                    <p className="mt-2 text-xs font-semibold text-green-700">
-                      Reviewed by {review.expert || "Agriculture Expert"}
-                    </p>
-                  </div>
-                )}
+                    {request.response && (
+                      <div className="mt-4 rounded-xl bg-green-50 p-4">
+                        <p className="text-xs font-bold uppercase tracking-wide text-green-700">
+                          Agricultural Expert
+                          Response
+                        </p>
 
-                {review.status !== "Completed" && (
-                  <p className="mt-3 text-xs text-gray-500">
-                    Your request is waiting for expert validation.
-                  </p>
-                )}
-              </article>
-            ))}
+                        <p className="mt-2 text-sm leading-6 text-green-900">
+                          {
+                            request.response
+                          }
+                        </p>
+
+                        {request.Expert && (
+                          <p className="mt-3 text-xs font-semibold text-green-700">
+                            Reviewed by{" "}
+                            {
+                              request
+                                .Expert
+                                .name
+                            }
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    <p className="mt-4 text-xs text-slate-400">
+                      Submitted{" "}
+                      {new Date(
+                        request.createdAt
+                      ).toLocaleString()}
+                    </p>
+                  </article>
+                )
+              )
+            )}
           </div>
         </section>
 
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link
+            href="/farmer/results"
+            className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            ← Back to Results
+          </Link>
+
           <Link
             href="/farmer/confirmation"
-            className="rounded-xl bg-green-700 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-green-800"
+            className="rounded-xl bg-green-700 px-5 py-3 text-sm font-semibold text-white hover:bg-green-800"
           >
             Field Confirmation
           </Link>
 
           <Link
             href="/farmer/history"
-            className="rounded-xl border bg-white px-5 py-3 text-center text-sm font-semibold text-gray-700 hover:bg-gray-50"
+            className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
           >
             View Scan History
           </Link>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

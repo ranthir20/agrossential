@@ -1,0 +1,303 @@
+"use client";
+
+import OfficerHeader from "@/components/officer/OfficerHeader";
+import Link from "next/link";
+import { useState } from "react";
+import styles from "./farms.module.css";
+
+export default function FarmsPage() {
+  const farms = [
+    {
+      id: "FRM-1042",
+      farmer: "Ramesh Patil",
+      district: "Nashik",
+      village: "Sinnar",
+      crop: "Tomato",
+      area: "4.2 acres",
+      risk: "High",
+      disease: "Early Blight",
+      lastUpdate: "12 min ago",
+    },
+    {
+      id: "FRM-1038",
+      farmer: "Sunita Deshmukh",
+      district: "Pune",
+      village: "Baramati",
+      crop: "Cotton",
+      area: "7.5 acres",
+      risk: "High",
+      disease: "Pink Bollworm",
+      lastUpdate: "28 min ago",
+    },
+    {
+      id: "FRM-1031",
+      farmer: "Mahesh Jadhav",
+      district: "Nagpur",
+      village: "Kalmeshwar",
+      crop: "Rice",
+      area: "6.1 acres",
+      risk: "Medium",
+      disease: "Brown Planthopper",
+      lastUpdate: "1 hr ago",
+    },
+    {
+      id: "FRM-1027",
+      farmer: "Priya Kulkarni",
+      district: "Kolhapur",
+      village: "Shirol",
+      crop: "Maize",
+      area: "3.8 acres",
+      risk: "Low",
+      disease: "No active detection",
+      lastUpdate: "2 hrs ago",
+    },
+    {
+      id: "FRM-1019",
+      farmer: "Vijay Shinde",
+      district: "Aurangabad",
+      village: "Paithan",
+      crop: "Soybean",
+      area: "8.6 acres",
+      risk: "Medium",
+      disease: "Leaf Spot",
+      lastUpdate: "3 hrs ago",
+    },
+  ];
+
+  const [search, setSearch] = useState("");
+  const [district, setDistrict] = useState("All Districts");
+  const [crop, setCrop] = useState("All Crops");
+  const [risk, setRisk] = useState("All Risk Levels");
+
+  const filteredFarms = farms.filter((farm) => {
+    const searchText = search.toLowerCase();
+
+    const matchesSearch =
+      farm.farmer.toLowerCase().includes(searchText) ||
+      farm.id.toLowerCase().includes(searchText) ||
+      farm.village.toLowerCase().includes(searchText) ||
+      farm.crop.toLowerCase().includes(searchText);
+
+    const matchesDistrict =
+      district === "All Districts" || farm.district === district;
+
+    const matchesCrop =
+      crop === "All Crops" || farm.crop === crop;
+
+    const matchesRisk =
+      risk === "All Risk Levels" || farm.risk === risk;
+
+    return (
+      matchesSearch &&
+      matchesDistrict &&
+      matchesCrop &&
+      matchesRisk
+    );
+  });
+
+  return (
+    <main className={styles.page}>
+      <OfficerHeader />
+
+      <section className={styles.content}>
+        <div className={styles.top}>
+          <div>
+            <p className={styles.eyebrow}>FIELD MONITORING</p>
+            <h1>Farms</h1>
+            <p className={styles.subtitle}>
+              Monitor registered farms, crop conditions and active disease risks across Maharashtra.
+            </p>
+          </div>
+
+          <button
+            className={styles.exportButton}
+            onClick={() => alert("Farm data export will start here.")}
+          >
+            Export Farm Data ↓
+          </button>
+        </div>
+
+        <section className={styles.stats}>
+          <article className={styles.statCard}>
+            <span className={styles.statIcon}>🌾</span>
+            <p>TOTAL FARMS</p>
+            <h2>2,486</h2>
+            <small>Registered in your region</small>
+          </article>
+
+          <article className={styles.statCard}>
+            <span className={styles.statIcon}>📡</span>
+            <p>ACTIVE MONITORING</p>
+            <h2>1,942</h2>
+            <small>Recent crop data received</small>
+          </article>
+
+          <article className={styles.statCard}>
+            <span className={styles.statIcon}>🔴</span>
+            <p>HIGH RISK FARMS</p>
+            <h2>87</h2>
+            <small>Requires immediate attention</small>
+          </article>
+
+          <article className={styles.statCard}>
+            <span className={styles.statIcon}>✓</span>
+            <p>HEALTHY FARMS</p>
+            <h2>1,746</h2>
+            <small>Low current risk</small>
+          </article>
+        </section>
+
+        <section className={styles.filters}>
+          <div className={styles.searchBox}>
+            🔍
+            <input
+              type="text"
+              placeholder="Search farmer, farm ID, village or crop..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          <select
+            value={district}
+            onChange={(e) => setDistrict(e.target.value)}
+          >
+            <option>All Districts</option>
+            <option>Nashik</option>
+            <option>Pune</option>
+            <option>Nagpur</option>
+            <option>Kolhapur</option>
+            <option>Aurangabad</option>
+          </select>
+
+          <select
+            value={crop}
+            onChange={(e) => setCrop(e.target.value)}
+          >
+            <option>All Crops</option>
+            <option>Tomato</option>
+            <option>Cotton</option>
+            <option>Rice</option>
+            <option>Maize</option>
+            <option>Soybean</option>
+          </select>
+
+          <select
+            value={risk}
+            onChange={(e) => setRisk(e.target.value)}
+          >
+            <option>All Risk Levels</option>
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+
+          <button
+            className={styles.filterButton}
+            onClick={() => alert(`${filteredFarms.length} farms found`)}
+          >
+            Apply Filters
+          </button>
+        </section>
+
+        <section className={styles.farmsCard}>
+          <div className={styles.cardHeader}>
+            <div>
+              <h2>Registered Farms</h2>
+              <p>
+                Showing {filteredFarms.length} farm(s) based on current filters
+              </p>
+            </div>
+
+            <span className={styles.totalBadge}>
+              {filteredFarms.length} RESULTS
+            </span>
+          </div>
+
+          <div className={styles.tableWrapper}>
+            <table>
+              <thead>
+                <tr>
+                  <th>Farm</th>
+                  <th>Farmer & Location</th>
+                  <th>Crop</th>
+                  <th>Area</th>
+                  <th>Current Risk</th>
+                  <th>Active Detection</th>
+                  <th>Last Update</th>
+                  <th></th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {filteredFarms.map((farm) => (
+                  <tr key={farm.id}>
+                    <td>
+                      <strong>{farm.id}</strong>
+                    </td>
+
+                    <td>
+                      <div className={styles.farmerInfo}>
+                        <strong>{farm.farmer}</strong>
+                        <span>{farm.village}, {farm.district}</span>
+                      </div>
+                    </td>
+
+                    <td>
+                      <span className={styles.cropBadge}>{farm.crop}</span>
+                    </td>
+
+                    <td>{farm.area}</td>
+
+                    <td>
+                      <span
+                        className={
+                          farm.risk === "High"
+                            ? styles.highRisk
+                            : farm.risk === "Medium"
+                            ? styles.mediumRisk
+                            : styles.lowRisk
+                        }
+                      >
+                        {farm.risk}
+                      </span>
+                    </td>
+
+                    <td>{farm.disease}</td>
+
+                    <td>
+                      <span className={styles.updateTime}>
+                        {farm.lastUpdate}
+                      </span>
+                    </td>
+
+                    <td>
+                      <button
+                        className={styles.viewButton}
+                        onClick={() =>
+                          alert(
+                            `${farm.farmer}\n\nFarm: ${farm.id}\nLocation: ${farm.village}, ${farm.district}\nCrop: ${farm.crop}\nRisk: ${farm.risk}\nDetection: ${farm.disease}`
+                          )
+                        }
+                      >
+                        View →
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+
+                {filteredFarms.length === 0 && (
+                  <tr>
+                    <td colSpan={8} className={styles.noResults}>
+                      No farms found matching your filters.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+  );
+}

@@ -8,3 +8,149 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Crop {
+  id             String           @id
+  farmId         String
+  crop           String
+  variety        String?
+  sowingDate     DateTime
+  growthStage    String?
+  cropHealth     String?
+  createdAt      DateTime         @default(now())
+  Farm           Farm             @relation(fields: [farmId], references: [id])
+  DiseaseReport  DiseaseReport[]
+  RiskAssessment RiskAssessment[]
+
+  @@index([farmId])
+}
+
+model DiseaseReport {
+  id                  String                @id
+  cropId              String
+  imageUrl            String?
+  predictedDisease    String
+  confidence          Float?
+  status              ReportStatus          @default(PENDING)
+  createdAt           DateTime              @default(now())
+  Crop                Crop                  @relation(fields: [cropId], references: [id])
+  ExpertReviewRequest ExpertReviewRequest[]
+  ExpertValidation    ExpertValidation?
+
+  @@index([cropId])
+}
+
+model ExpertValidation {
+  id            String             @id
+  reportId      String             @unique
+  expertId      String
+  finalDisease  String?
+  decision      ValidationDecision
+  comments      String?
+  createdAt     DateTime           @default(now())
+  User          User               @relation(fields: [expertId], references: [id])
+  DiseaseReport DiseaseReport      @relation(fields: [reportId], references: [id])
+}
+
+model Farm {
+  id               String        @id
+  farmerId         String
+  farmName         String
+  village          String?
+  district         String?
+  state            String?
+  area             Float?
+  areaUnit         String?
+  soilType         String?
+  irrigationMethod String?
+  latitude         Float
+  longitude        Float
+  createdAt        DateTime      @default(now())
+  Crop             Crop[]
+  User             User          @relation(fields: [farmerId], references: [id])
+  WeatherData      WeatherData[]
+
+  @@index([farmerId])
+}
+
+model RiskAssessment {
+  id        String   @id
+  cropId    String
+  riskLevel String
+  riskScore Float
+  reason    String?
+  createdAt DateTime @default(now())
+  Crop      Crop     @relation(fields: [cropId], references: [id])
+
+  @@index([cropId])
+}
+
+model User {
+  id                   String                @id
+  clerkId              String?               @unique
+  name                 String
+  email                String                @unique
+  phone                String?
+  role                 Role                  @default(FARMER)
+  language             String                @default("en")
+  createdAt            DateTime              @default(now())
+  ExpertReviewRequests ExpertReviewRequest[] @relation("ExpertReviewRequests")
+  FarmerReviewRequests ExpertReviewRequest[] @relation("FarmerReviewRequests")
+  ExpertValidation     ExpertValidation[]
+  Farm                 Farm[]
+}
+
+model WeatherData {
+  id          String   @id
+  farmId      String
+  date        DateTime
+  temperature Float?
+  humidity    Float?
+  rainfall    Float?
+  Farm        Farm     @relation(fields: [farmId], references: [id])
+
+  @@unique([farmId, date])
+}
+
+model ExpertReviewRequest {
+  id            String              @id
+  reportId      String
+  farmerId      String
+  question      String
+  response      String?
+  expertId      String?
+  status        ReviewRequestStatus @default(PENDING)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  Expert        User?               @relation("ExpertReviewRequests", fields: [expertId], references: [id])
+  Farmer        User                @relation("FarmerReviewRequests", fields: [farmerId], references: [id])
+  DiseaseReport DiseaseReport       @relation(fields: [reportId], references: [id])
+
+  @@index([reportId])
+  @@index([farmerId])
+  @@index([expertId])
+  @@index([status])
+}
+
+enum ReportStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+}
+
+enum Role {
+  FARMER
+  EXPERT
+  OFFICER
+}
+
+enum ValidationDecision {
+  CONFIRMED
+  REJECTED
+  UNCERTAIN
+}
+
+enum ReviewRequestStatus {
+  PENDING
+  IN_REVIEW
+  COMPLETED
+}

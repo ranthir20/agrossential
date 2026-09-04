@@ -1,0 +1,507 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import styles from "./expert-reviews.module.css";
+
+type Review = {
+  id: string;
+  farmer: string;
+  location: string;
+  crop: string;
+  issue: string;
+  confidence: string;
+  severity: string;
+  status: string;
+};
+
+export default function ExpertReviewsPage() {
+  const [reviews, setReviews] = useState<Review[]>([
+    {
+      id: "REV-1042",
+      farmer: "Ramesh Patil",
+      location: "Nashik",
+      crop: "Tomato",
+      issue: "Early Blight",
+      confidence: "94%",
+      severity: "High",
+      status: "Pending Review",
+    },
+    {
+      id: "REV-1041",
+      farmer: "Sunita Deshmukh",
+      location: "Pune",
+      crop: "Cotton",
+      issue: "Pink Bollworm",
+      confidence: "91%",
+      severity: "High",
+      status: "Pending Review",
+    },
+    {
+      id: "REV-1040",
+      farmer: "Mahesh Jadhav",
+      location: "Nagpur",
+      crop: "Rice",
+      issue: "Brown Planthopper",
+      confidence: "87%",
+      severity: "Medium",
+      status: "Under Review",
+    },
+    {
+      id: "REV-1039",
+      farmer: "Priya Kulkarni",
+      location: "Kolhapur",
+      crop: "Maize",
+      issue: "Fall Armyworm",
+      confidence: "96%",
+      severity: "High",
+      status: "Pending Review",
+    },
+  ]);
+
+  const [selectedFilter, setSelectedFilter] = useState("All Reviews");
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
+  const [modalMode, setModalMode] = useState<"view" | "review">("view");
+
+  const filteredReviews = reviews.filter((review) => {
+    if (selectedFilter === "Pending") {
+      return review.status === "Pending Review";
+    }
+
+    if (selectedFilter === "Under Review") {
+      return review.status === "Under Review";
+    }
+
+    if (selectedFilter === "High Severity") {
+      return review.severity === "High";
+    }
+
+    return true;
+  });
+
+  const updateStatus = (id: string, newStatus: string) => {
+    setReviews((currentReviews) =>
+      currentReviews.map((review) =>
+        review.id === id
+          ? { ...review, status: newStatus }
+          : review
+      )
+    );
+
+    setSelectedReview((currentReview) =>
+      currentReview && currentReview.id === id
+        ? { ...currentReview, status: newStatus }
+        : currentReview
+    );
+
+    setModalMode("view");
+  };
+
+  const openCase = (review: Review, mode: "view" | "review") => {
+    setSelectedReview(review);
+    setModalMode(mode);
+  };
+
+  const pendingCount = reviews.filter(
+    (review) => review.status === "Pending Review"
+  ).length;
+
+  const underReviewCount = reviews.filter(
+    (review) => review.status === "Under Review"
+  ).length;
+
+  return (
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <Link href="/officer" className={styles.brand}>
+          🌱 <span>agrossential</span>
+        </Link>
+
+        <nav className={styles.nav}>
+          <Link href="/officer">Dashboard</Link>
+          <Link href="/officer/farms">Farms</Link>
+          <Link href="/officer/disease-map">Disease Map</Link>
+          <Link href="/officer/alerts">Alerts</Link>
+          <Link href="/officer/analytics">Analytics</Link>
+
+          <Link
+            href="/officer/expert-reviews"
+            className={styles.active}
+          >
+            Expert Reviews
+          </Link>
+
+          <Link href="/officer/confirmation">Field Confirmation</Link>
+          <Link href="/officer/reports">Reports</Link>
+        </nav>
+
+        <div className={styles.profile}>
+          <div className={styles.profileText}>
+            <strong>Agricultural Officer</strong>
+            <span>Maharashtra Region</span>
+          </div>
+
+          <div className={styles.avatar}>AO</div>
+        </div>
+      </header>
+
+      <section className={styles.content}>
+        <div className={styles.top}>
+          <div>
+            <p className={styles.eyebrow}>EXPERT VALIDATION CENTER</p>
+
+            <h1>Expert Reviews</h1>
+
+            <p className={styles.subtitle}>
+              Validate AI detections and confirm disease or pest cases reported from the field.
+            </p>
+          </div>
+
+          <button
+            className={styles.assignButton}
+            onClick={() => alert("Expert assignment feature will connect to the backend.")}
+          >
+            + Assign Expert
+          </button>
+        </div>
+
+        <div className={styles.filters}>
+          <span className={styles.filterLabel}>Filter:</span>
+
+          {[
+            "All Reviews",
+            "Pending",
+            "Under Review",
+            "High Severity",
+            "Last 7 Days",
+          ].map((filter) => (
+            <button
+              key={filter}
+              className={
+                selectedFilter === filter
+                  ? styles.selected
+                  : ""
+              }
+              onClick={() => setSelectedFilter(filter)}
+            >
+              {filter}
+            </button>
+          ))}
+        </div>
+
+        <div className={styles.stats}>
+          <div className={styles.statCard}>
+            <span className={styles.icon}>🤖</span>
+            <p>AI DETECTIONS</p>
+            <h2>{reviews.length}</h2>
+            <small>Awaiting expert validation</small>
+          </div>
+
+          <div className={styles.statCard}>
+            <span className={styles.icon}>⏳</span>
+            <p>PENDING REVIEW</p>
+            <h2>{pendingCount}</h2>
+            <small>Requires expert attention</small>
+          </div>
+
+          <div className={styles.statCard}>
+            <span className={styles.icon}>🔬</span>
+            <p>UNDER REVIEW</p>
+            <h2>{underReviewCount}</h2>
+            <small>Being validated by experts</small>
+          </div>
+
+          <div className={styles.statCard}>
+            <span className={styles.icon}>✓</span>
+            <p>CONFIRMED TODAY</p>
+            <h2>27</h2>
+            <small>Field + expert validated</small>
+          </div>
+        </div>
+
+        <div className={styles.mainGrid}>
+          <section className={styles.reviewCard}>
+            <div className={styles.cardHeader}>
+              <div>
+                <h3>Cases Awaiting Validation</h3>
+                <p>AI-detected crop health cases requiring expert review</p>
+              </div>
+
+              <span className={styles.countBadge}>
+                {filteredReviews.length} CASES
+              </span>
+            </div>
+
+            <div className={styles.caseList}>
+              {filteredReviews.map((review) => (
+                <article className={styles.caseItem} key={review.id}>
+                  <div className={styles.caseTop}>
+                    <div>
+                      <span className={styles.caseId}>
+                        {review.id}
+                      </span>
+
+                      <h4>{review.issue}</h4>
+
+                      <p>
+                        {review.crop} • {review.location}
+                      </p>
+                    </div>
+
+                    <span
+                      className={
+                        review.severity === "High"
+                          ? styles.highBadge
+                          : styles.mediumBadge
+                      }
+                    >
+                      {review.severity}
+                    </span>
+                  </div>
+
+                  <div className={styles.caseInfo}>
+                    <div>
+                      <span>Farmer</span>
+                      <strong>{review.farmer}</strong>
+                    </div>
+
+                    <div>
+                      <span>AI Confidence</span>
+
+                      <strong className={styles.confidence}>
+                        {review.confidence}
+                      </strong>
+                    </div>
+
+                    <div>
+                      <span>Status</span>
+                      <strong>{review.status}</strong>
+                    </div>
+                  </div>
+
+                  <div className={styles.actions}>
+                    <button
+                      className={styles.viewButton}
+                      onClick={() => openCase(review, "view")}
+                    >
+                      View Case
+                    </button>
+
+                    <button
+                      className={styles.reviewButton}
+                      onClick={() => openCase(review, "review")}
+                    >
+                      Start Review →
+                    </button>
+                  </div>
+                </article>
+              ))}
+
+              {filteredReviews.length === 0 && (
+                <p className={styles.noCases}>
+                  No cases found for this filter.
+                </p>
+              )}
+            </div>
+          </section>
+
+          <aside className={styles.sideColumn}>
+            <section className={styles.sideCard}>
+              <h3>Review Queue</h3>
+
+              <p className={styles.sideSubtitle}>
+                Current expert validation workload
+              </p>
+
+              <div className={styles.queueItem}>
+                <div>
+                  <strong>High Priority</strong>
+                  <span>Immediate validation needed</span>
+                </div>
+
+                <b className={styles.redNumber}>
+                  {reviews.filter(
+                    (review) =>
+                      review.severity === "High" &&
+                      review.status !== "Confirmed"
+                  ).length}
+                </b>
+              </div>
+
+              <div className={styles.queueItem}>
+                <div>
+                  <strong>Pending</strong>
+                  <span>Waiting for assignment</span>
+                </div>
+
+                <b className={styles.orangeNumber}>
+                  {pendingCount}
+                </b>
+              </div>
+
+              <div className={styles.queueItem}>
+                <div>
+                  <strong>Under Review</strong>
+                  <span>Experts currently reviewing</span>
+                </div>
+
+                <b className={styles.blueNumber}>
+                  {underReviewCount}
+                </b>
+              </div>
+            </section>
+
+            <section className={styles.sideCard}>
+              <h3>Expert Performance</h3>
+
+              <p className={styles.sideSubtitle}>
+                Today's validation summary
+              </p>
+
+              <div className={styles.performance}>
+                <div className={styles.performanceRow}>
+                  <span>Cases Reviewed</span>
+                  <strong>27</strong>
+                </div>
+
+                <div className={styles.performanceRow}>
+                  <span>Avg. Review Time</span>
+                  <strong>18 min</strong>
+                </div>
+
+                <div className={styles.performanceRow}>
+                  <span>AI Accuracy</span>
+                  <strong className={styles.greenText}>92.4%</strong>
+                </div>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </section>
+
+      {selectedReview && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setSelectedReview(null)}
+        >
+          <div
+            className={styles.modal}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className={styles.closeButton}
+              onClick={() => setSelectedReview(null)}
+            >
+              ×
+            </button>
+
+            <p className={styles.modalId}>
+              {selectedReview.id}
+            </p>
+
+            <h2>{selectedReview.issue}</h2>
+
+            <p className={styles.modalSubtitle}>
+              AI detection submitted for expert validation
+            </p>
+
+            <div className={styles.modalGrid}>
+              <div>
+                <span>Farmer</span>
+                <strong>{selectedReview.farmer}</strong>
+              </div>
+
+              <div>
+                <span>Location</span>
+                <strong>{selectedReview.location}</strong>
+              </div>
+
+              <div>
+                <span>Crop</span>
+                <strong>{selectedReview.crop}</strong>
+              </div>
+
+              <div>
+                <span>AI Confidence</span>
+                <strong>{selectedReview.confidence}</strong>
+              </div>
+
+              <div>
+                <span>Severity</span>
+                <strong>{selectedReview.severity}</strong>
+              </div>
+
+              <div>
+                <span>Current Status</span>
+                <strong>{selectedReview.status}</strong>
+              </div>
+            </div>
+
+            {modalMode === "view" ? (
+              <div className={styles.modalActions}>
+                <button
+                  className={styles.startReviewButton}
+                  onClick={() => {
+                    updateStatus(
+                      selectedReview.id,
+                      "Under Review"
+                    );
+                    setModalMode("review");
+                  }}
+                >
+                  Start Expert Review →
+                </button>
+              </div>
+            ) : (
+              <div className={styles.reviewWorkflow}>
+                <h3>Expert Decision</h3>
+
+                <p>
+                  Review the AI detection and choose the appropriate validation result.
+                </p>
+
+                <div className={styles.decisionButtons}>
+                  <button
+                    className={styles.confirmButton}
+                    onClick={() =>
+                      updateStatus(
+                        selectedReview.id,
+                        "Confirmed"
+                      )
+                    }
+                  >
+                    ✓ Confirm Disease
+                  </button>
+
+                  <button
+                    className={styles.rejectButton}
+                    onClick={() =>
+                      updateStatus(
+                        selectedReview.id,
+                        "Rejected"
+                      )
+                    }
+                  >
+                    ✕ Reject Detection
+                  </button>
+
+                  <button
+                    className={styles.fieldButton}
+                    onClick={() =>
+                      updateStatus(
+                        selectedReview.id,
+                        "Field Check Requested"
+                      )
+                    }
+                  >
+                    📍 Request Field Check
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </main>
+  );
+}

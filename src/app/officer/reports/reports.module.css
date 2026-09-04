@@ -1,0 +1,597 @@
+.page {
+  min-height: 100vh;
+  background: #f5f7f6;
+  color: #1f2937;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.header {
+  min-height: 76px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  padding: 0 36px;
+  gap: 34px;
+}
+
+.brand {
+  text-decoration: none;
+  color: #235c3b;
+  font-size: 25px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  flex: 1;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.nav a:hover,
+.nav .active {
+  color: #1f6b45;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: right;
+}
+
+.profile strong {
+  display: block;
+  font-size: 14px;
+}
+
+.profile span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #e2f3e8;
+  color: #286442;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+}
+
+.content {
+  max-width: 1440px;
+  margin: auto;
+  padding: 48px 36px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: #64748b;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  font-weight: 800;
+}
+
+.top h1 {
+  margin: 0;
+  font-size: 34px;
+}
+
+.subtitle {
+  margin: 12px 0 0;
+  color: #64748b;
+}
+
+.generateButton {
+  border: none;
+  padding: 15px 22px;
+  border-radius: 14px;
+  background: #205d3a;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.quickReports,
+.reportsCard {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+  padding: 26px;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.04);
+}
+
+.quickReports {
+  margin-bottom: 24px;
+}
+
+.quickReports h2 {
+  margin: 0 0 8px;
+  font-size: 21px;
+}
+
+.quickReports > p {
+  margin: 0 0 24px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.reportOptions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.optionCard {
+  position: relative;
+  min-height: 155px;
+  padding: 22px;
+  text-align: left;
+  background: #fbfcfb;
+  border: 1px solid #e1e8e3;
+  border-radius: 18px;
+  cursor: pointer;
+}
+
+.optionCard:hover {
+  border-color: #9ecdb0;
+  box-shadow: 0 8px 20px rgba(31, 93, 58, 0.07);
+}
+
+.optionIcon {
+  display: block;
+  font-size: 27px;
+  margin-bottom: 18px;
+}
+
+.optionCard strong {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.optionCard small {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.arrow {
+  position: absolute;
+  right: 18px;
+  bottom: 16px;
+  color: #286442;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.statCard {
+  padding: 24px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.04);
+}
+
+.statCard > span {
+  font-size: 24px;
+}
+
+.statCard p {
+  margin: 17px 0 10px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+}
+
+.statCard h2 {
+  margin: 0 0 10px;
+  font-size: 31px;
+}
+
+.statCard small {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.cardHeader h2 {
+  margin: 0 0 8px;
+  font-size: 21px;
+}
+
+.cardHeader p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.actions button {
+  border: 1px solid #d8e0db;
+  background: white;
+  color: #536274;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.reportList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reportRow {
+  display: grid;
+  grid-template-columns: auto 1.8fr 1fr auto auto;
+  align-items: center;
+  gap: 20px;
+  padding: 18px;
+  border: 1px solid #e8edef;
+  border-radius: 17px;
+}
+
+.reportRow:hover {
+  background: #fbfcfb;
+  border-color: #c9dfd0;
+}
+
+.fileIcon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: #edf6f0;
+  font-size: 22px;
+}
+
+.reportId {
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.reportInfo h3 {
+  margin: 5px 0 6px;
+  font-size: 15px;
+}
+
+.reportInfo p {
+  margin: 0;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.generated {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.generated span {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.generated strong {
+  color: #475569;
+  font-size: 12px;
+}
+
+.readyBadge {
+  padding: 7px 11px;
+  border-radius: 20px;
+  background: #e7f7ec;
+  color: #237044;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.rowActions {
+  display: flex;
+  gap: 8px;
+}
+
+.viewButton,
+.downloadButton {
+  padding: 9px 12px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.viewButton {
+  background: white;
+  color: #475569;
+  border: 1px solid #d7dde0;
+}
+
+.downloadButton {
+  border: none;
+  background: #205d3a;
+  color: white;
+}
+
+@media (max-width: 1200px) {
+  .nav {
+    gap: 14px;
+  }
+
+  .nav a {
+    font-size: 12px;
+  }
+
+  .reportOptions,
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .reportRow {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .generated {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .header {
+    height: auto;
+    padding: 15px;
+    flex-wrap: wrap;
+  }
+
+  .nav {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .content {
+    padding: 28px 16px;
+  }
+
+  .top,
+  .cardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .reportOptions,
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .reportRow {
+    grid-template-columns: auto 1fr;
+  }
+
+  .readyBadge,
+  .rowActions {
+    grid-column: 2;
+  }
+}
+
+/* ===== FINAL RESPONSIVE SCREEN FIT ===== */
+
+.header,
+.topbar {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.main,
+.content,
+.container {
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+
+body {
+  overflow-x: hidden;
+}
+
+/* Prevent tables and wide content from breaking the viewport */
+.tableContainer,
+.tableWrapper,
+.table,
+.mapContainer,
+.map,
+.contentArea {
+  max-width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .main,
+  .content,
+  .container {
+    max-width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .header,
+  .topbar {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media (max-width: 900px) {
+  .main,
+  .content,
+  .container {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .header,
+  .topbar {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .tableContainer,
+  .tableWrapper,
+  .mapContainer,
+  .map {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .main,
+  .content,
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .header,
+  .topbar {
+    width: 100%;
+    min-height: 64px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  /* Remove desktop minimum widths on small screens */
+  .table,
+  .tableWrapper,
+  .map,
+  .mapContainer {
+    min-width: 0 !important;
+    width: 100%;
+  }
+
+  /* Let grids collapse naturally */
+  .grid,
+  .stats,
+  .cards,
+  .contentGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ===== SCREEN FIT ===== */
+
+.main,
+.content,
+.container,
+.wrapper {
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+.tableContainer,
+.tableWrapper {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+@media (max-width: 1100px) {
+  .main,
+  .content,
+  .container,
+  .wrapper {
+    max-width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media (max-width: 800px) {
+  .main,
+  .content,
+  .container,
+  .wrapper {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* ===== FULL SCREEN ===== */
+
+.page {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.page > .content {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 42px 36px 50px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .page > .content {
+    padding: 30px 20px 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .page > .content {
+    padding: 22px 16px 32px;
+  }
+}
