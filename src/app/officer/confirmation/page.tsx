@@ -1,0 +1,213 @@
+"use client";
+
+import OfficerHeader from "@/components/officer/OfficerHeader";
+import Link from "next/link";
+import { useState } from "react";
+
+type CaseItem = {
+  id: string;
+  farmer: string;
+  district: string;
+  crop: string;
+  prediction: string;
+  confidence: number;
+  severity: "HIGH" | "MEDIUM" | "LOW";
+  status: "Awaiting Confirmation" | "Confirmed" | "Different";
+};
+
+const initialCases: CaseItem[] = [
+  {
+    id: "FC-1042",
+    farmer: "Ramesh Patil",
+    district: "Nashik",
+    crop: "Tomato",
+    prediction: "Early Blight",
+    confidence: 94,
+    severity: "HIGH",
+    status: "Awaiting Confirmation",
+  },
+  {
+    id: "FC-1041",
+    farmer: "Sunita Deshmukh",
+    district: "Pune",
+    crop: "Cotton",
+    prediction: "Pink Bollworm",
+    confidence: 91,
+    severity: "HIGH",
+    status: "Awaiting Confirmation",
+  },
+  {
+    id: "FC-1040",
+    farmer: "Mahesh Jadhav",
+    district: "Nagpur",
+    crop: "Rice",
+    prediction: "Brown Planthopper",
+    confidence: 87,
+    severity: "MEDIUM",
+    status: "Awaiting Confirmation",
+  },
+];
+
+export default function OfficerConfirmationPage() {
+  const [cases, setCases] = useState(initialCases);
+  const [selected, setSelected] = useState<CaseItem | null>(null);
+
+  const updateCase = (status: CaseItem["status"]) => {
+    if (!selected) return;
+
+    setCases((current) =>
+      current.map((item) =>
+        item.id === selected.id ? { ...item, status } : item
+      )
+    );
+
+    setSelected(null);
+  };
+
+  const pending = cases.filter(
+    (item) => item.status === "Awaiting Confirmation"
+  ).length;
+
+  const confirmed = cases.filter(
+    (item) => item.status === "Confirmed"
+  ).length;
+
+  return (
+    <main className="min-h-screen bg-slate-50 text-slate-900">
+      <OfficerHeader />
+
+      <section className="w-full max-w-none px-4 sm:px-6 lg:px-8 py-8 box-border overflow-x-hidden">
+        <div className="mb-8">
+          <p className="text-xs font-bold tracking-widest text-green-700">
+            FIELD VALIDATION
+          </p>
+          <h1 className="mt-2 text-3xl font-bold">Field Confirmation</h1>
+          <p className="mt-2 text-slate-600">
+            Validate AI detections using field observations and expert review.
+          </p>
+        </div>
+
+        <div className="mb-8 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl border bg-white p-5 shadow-sm">
+            <p className="text-sm text-slate-500">Awaiting Confirmation</p>
+            <strong className="mt-2 block text-3xl">{pending}</strong>
+          </div>
+          <div className="rounded-2xl border bg-white p-5 shadow-sm">
+            <p className="text-sm text-slate-500">Confirmed Cases</p>
+            <strong className="mt-2 block text-3xl">{confirmed}</strong>
+          </div>
+          <div className="rounded-2xl border bg-white p-5 shadow-sm">
+            <p className="text-sm text-slate-500">Total Cases</p>
+            <strong className="mt-2 block text-3xl">{cases.length}</strong>
+          </div>
+        </div>
+
+        <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">
+          <div className="border-b px-6 py-5">
+            <h2 className="text-lg font-bold">Cases Requiring Field Confirmation</h2>
+            <p className="text-sm text-slate-500">
+              AI prediction → field observation → confirmed case
+            </p>
+          </div>
+
+          <div className="divide-y">
+            {cases.map((item) => (
+              <div
+                key={item.id}
+                className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between"
+              >
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <strong>{item.prediction}</strong>
+                    <span className="rounded-full bg-slate-100 px-2 py-1 text-xs">
+                      {item.id}
+                    </span>
+                    <span
+                      className={`rounded-full px-2 py-1 text-xs font-bold ${
+                        item.severity === "HIGH"
+                          ? "bg-red-100 text-red-700"
+                          : item.severity === "MEDIUM"
+                            ? "bg-orange-100 text-orange-700"
+                            : "bg-green-100 text-green-700"
+                      }`}
+                    >
+                      {item.severity}
+                    </span>
+                  </div>
+
+                  <p className="mt-1 text-sm text-slate-600">
+                    {item.farmer} • {item.crop} • {item.district}, Maharashtra
+                  </p>
+
+                  <p className="mt-1 text-sm">
+                    AI Confidence: <strong>{item.confidence}%</strong>
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-slate-500">{item.status}</span>
+                  {item.status === "Awaiting Confirmation" && (
+                    <button
+                      onClick={() => setSelected(item)}
+                      className="rounded-xl bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800"
+                    >
+                      Confirm Case
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-6 rounded-2xl border border-green-200 bg-green-50 p-5">
+          <strong>Why field confirmation matters</strong>
+          <p className="mt-1 text-sm text-green-900">
+            Confirmed field cases can be stored as validated training data,
+            helping agrossential improve future disease and pest detection.
+          </p>
+        </div>
+      </section>
+
+      {selected && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+            <h2 className="text-xl font-bold">Confirm Field Case</h2>
+            <p className="mt-2 text-sm text-slate-600">
+              AI detected <strong>{selected.prediction}</strong> in{" "}
+              {selected.crop} with {selected.confidence}% confidence.
+            </p>
+
+            <div className="mt-6 rounded-xl bg-slate-50 p-4">
+              <p className="text-sm font-semibold">Field observation</p>
+              <p className="mt-1 text-sm text-slate-600">
+                Select the outcome based on field inspection.
+              </p>
+            </div>
+
+            <div className="mt-6 grid gap-3">
+              <button
+                onClick={() => updateCase("Confirmed")}
+                className="rounded-xl bg-green-700 px-4 py-3 font-semibold text-white"
+              >
+                ✓ Confirm AI Prediction
+              </button>
+              <button
+                onClick={() => updateCase("Different")}
+                className="rounded-xl border border-orange-300 bg-orange-50 px-4 py-3 font-semibold text-orange-800"
+              >
+                Report Different Finding
+              </button>
+              <button
+                onClick={() => setSelected(null)}
+                className="rounded-xl border px-4 py-3 font-semibold"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
+  );
+}

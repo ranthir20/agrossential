@@ -1,0 +1,246 @@
+import Link from "next/link";
+import styles from "./analytics.module.css";
+
+export default function AnalyticsPage() {
+  const cropData = [
+    { crop: "Cotton", cases: 42, risk: "High", percentage: 82 },
+    { crop: "Tomato", cases: 35, risk: "High", percentage: 74 },
+    { crop: "Rice", cases: 28, risk: "Medium", percentage: 58 },
+    { crop: "Maize", cases: 19, risk: "Medium", percentage: 41 },
+    { crop: "Soybean", cases: 12, risk: "Low", percentage: 26 },
+  ];
+
+  return (
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <Link href="/officer" className={styles.brand}>
+          🌱 <span>agrossential</span>
+        </Link>
+
+        <nav className={styles.nav}>
+          <Link href="/officer">Dashboard</Link>
+          <Link href="/officer/farms">Farms</Link>
+          <Link href="/officer/disease-map">Disease Map</Link>
+          <Link href="/officer/alerts">Alerts</Link>
+          <Link href="/officer/analytics" className={styles.active}>Analytics</Link>
+          <Link href="/officer/expert-reviews">Expert Reviews</Link>
+          <Link href="/officer/confirmation">Field Confirmation</Link>
+          <Link href="/officer/reports">Reports</Link>
+        </nav>
+
+        <div className={styles.profile}>
+          <div>
+            <strong>Agricultural Officer</strong>
+            <span>Maharashtra Region</span>
+          </div>
+          <div className={styles.avatar}>AO</div>
+        </div>
+      </header>
+
+      <section className={styles.content}>
+        <div className={styles.top}>
+          <div>
+            <p className={styles.eyebrow}>INTELLIGENCE & ANALYTICS</p>
+            <h1>Crop Risk Analytics</h1>
+            <p className={styles.subtitle}>
+              Monitor disease trends, pest activity and crop-wise risk across Maharashtra.
+            </p>
+          </div>
+
+          <button className={styles.export}>↓ Export Analytics</button>
+        </div>
+
+        <div className={styles.filters}>
+          <span className={styles.filterLabel}>Analyze:</span>
+          <button className={styles.selected}>All Maharashtra</button>
+          <button>Last 30 Days</button>
+          <button>All Crops</button>
+          <button>All Diseases</button>
+        </div>
+
+        <div className={styles.stats}>
+          <div className={styles.statCard}>
+            <span className={styles.icon}>📈</span>
+            <p>Total Reports</p>
+            <h2>1,248</h2>
+            <small>↑ 18% from last month</small>
+          </div>
+
+          <div className={styles.statCard}>
+            <span className={styles.icon}>🔴</span>
+            <p>High Risk Cases</p>
+            <h2>186</h2>
+            <small>Requires immediate attention</small>
+          </div>
+
+          <div className={styles.statCard}>
+            <span className={styles.icon}>🤖</span>
+            <p>AI Detections</p>
+            <h2>892</h2>
+            <small>91.6% average confidence</small>
+          </div>
+
+          <div className={styles.statCard}>
+            <span className={styles.icon}>🌾</span>
+            <p>Field Confirmations</p>
+            <h2>734</h2>
+            <small>Validated by field teams</small>
+          </div>
+        </div>
+
+        <div className={styles.grid}>
+          <section className={styles.card}>
+            <div className={styles.cardHeader}>
+              <div>
+                <h3>Disease Trend</h3>
+                <p>Reported cases over the last 7 days</p>
+              </div>
+              <span className={styles.live}>● LIVE</span>
+            </div>
+
+            <div className={styles.chart}>
+              <div className={styles.yAxis}>
+                <span>80</span>
+                <span>60</span>
+                <span>40</span>
+                <span>20</span>
+                <span>0</span>
+              </div>
+
+              <div className={styles.bars}>
+                <div className={styles.barItem}>
+                  <div className={styles.bar} style={{ height: "42%" }}></div>
+                  <span>Mon</span>
+                </div>
+                <div className={styles.barItem}>
+                  <div className={styles.bar} style={{ height: "58%" }}></div>
+                  <span>Tue</span>
+                </div>
+                <div className={styles.barItem}>
+                  <div className={styles.bar} style={{ height: "47%" }}></div>
+                  <span>Wed</span>
+                </div>
+                <div className={styles.barItem}>
+                  <div className={styles.bar} style={{ height: "76%" }}></div>
+                  <span>Thu</span>
+                </div>
+                <div className={styles.barItem}>
+                  <div className={styles.bar} style={{ height: "91%" }}></div>
+                  <span>Fri</span>
+                </div>
+                <div className={styles.barItem}>
+                  <div className={styles.bar} style={{ height: "64%" }}></div>
+                  <span>Sat</span>
+                </div>
+                <div className={styles.barItem}>
+                  <div className={styles.bar} style={{ height: "72%" }}></div>
+                  <span>Sun</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.card}>
+            <div className={styles.cardHeader}>
+              <div>
+                <h3>Risk Distribution</h3>
+                <p>Current severity across monitored farms</p>
+              </div>
+            </div>
+
+            <div className={styles.riskList}>
+              <div className={styles.riskRow}>
+                <div className={styles.riskName}>
+                  <span className={styles.redDot}></span>
+                  High Severity
+                </div>
+                <strong>32%</strong>
+              </div>
+
+              <div className={styles.progress}>
+                <div className={styles.highProgress}></div>
+              </div>
+
+              <div className={styles.riskRow}>
+                <div className={styles.riskName}>
+                  <span className={styles.orangeDot}></span>
+                  Medium Severity
+                </div>
+                <strong>46%</strong>
+              </div>
+
+              <div className={styles.progress}>
+                <div className={styles.mediumProgress}></div>
+              </div>
+
+              <div className={styles.riskRow}>
+                <div className={styles.riskName}>
+                  <span className={styles.greenDot}></span>
+                  Low Severity
+                </div>
+                <strong>22%</strong>
+              </div>
+
+              <div className={styles.progress}>
+                <div className={styles.lowProgress}></div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section className={styles.card}>
+          <div className={styles.cardHeader}>
+            <div>
+              <h3>Crop-wise Risk Analysis</h3>
+              <p>Current disease and pest reports by crop</p>
+            </div>
+            <span className={styles.viewAll}>View Detailed Analysis →</span>
+          </div>
+
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Crop</th>
+                  <th>Reported Cases</th>
+                  <th>Risk Activity</th>
+                  <th>Severity</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {cropData.map((item) => (
+                  <tr key={item.crop}>
+                    <td><strong>{item.crop}</strong></td>
+                    <td>{item.cases} active reports</td>
+                    <td>
+                      <div className={styles.activity}>
+                        <div
+                          className={styles.activityBar}
+                          style={{ width: `${item.percentage}%` }}
+                        ></div>
+                      </div>
+                    </td>
+                    <td>
+                      <span
+                        className={
+                          item.risk === "High"
+                            ? styles.highBadge
+                            : item.risk === "Medium"
+                            ? styles.mediumBadge
+                            : styles.lowBadge
+                        }
+                      >
+                        {item.risk}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+  );
+}

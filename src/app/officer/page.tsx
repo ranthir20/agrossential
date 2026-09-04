@@ -1,3 +1,5 @@
+import OfficerHeader from "@/components/officer/OfficerHeader";
+import Link from "next/link";
 import styles from "./officer.module.css";
 
 export default function OfficerPage() {
@@ -44,30 +46,7 @@ export default function OfficerPage() {
 
   return (
     <main className={styles.app}>
-      <header className={styles.topbar}>
-        <div className={styles.brand}>
-          <span className={styles.logoIcon}>🌱</span>
-          <span>agrossential</span>
-        </div>
-
-        <nav className={styles.nav}>
-          <span className={styles.navActive}>Dashboard</span>
-          <span>Farms</span>
-          <span>Disease Map</span>
-          <span>Alerts</span>
-          <span>Analytics</span>
-          <span>Expert Reviews</span>
-          <span>Reports</span>
-        </nav>
-
-        <div className={styles.profile}>
-          <div className={styles.profileText}>
-            <strong>Agricultural Officer</strong>
-            <span>Maharashtra Region</span>
-          </div>
-          <div className={styles.avatar}>AO</div>
-        </div>
-      </header>
+      <OfficerHeader />
 
       <section className={styles.content}>
         <div className={styles.pageHeader}>
@@ -80,9 +59,7 @@ export default function OfficerPage() {
             </p>
           </div>
 
-          <button className={styles.primaryButton}>
-            + Create Advisory
-          </button>
+          <Link href="/officer/alerts" className={styles.primaryButton}>+ Create Advisory</Link>
         </div>
 
         <section className={styles.filters}>
@@ -204,7 +181,7 @@ export default function OfficerPage() {
               </div>
             </div>
 
-            <button className={styles.secondaryButton}>View Full Risk Analysis →</button>
+            <Link href="/officer/disease-map" className={styles.secondaryButton}>View Full Risk Analysis →</Link>
           </article>
         </section>
 
@@ -215,7 +192,7 @@ export default function OfficerPage() {
                 <h2>Recent Alerts</h2>
                 <p>Latest AI and farmer-reported cases</p>
               </div>
-              <button className={styles.textButton}>View All →</button>
+              <Link href="/officer/alerts" className={styles.textButton}>View All →</Link>
             </div>
 
             <div className={styles.tableWrap}>
@@ -288,7 +265,7 @@ export default function OfficerPage() {
               ))}
             </div>
 
-            <button className={styles.secondaryButton}>Open Farm Monitoring →</button>
+            <Link href="/officer/farms" className={styles.secondaryButton}>Open Farm Monitoring →</Link>
           </article>
         </section>
 
@@ -351,7 +328,7 @@ export default function OfficerPage() {
                 <strong>Tomato leaf disease</strong>
                 <p>AI Confidence: 94%</p>
               </div>
-              <button className={styles.reviewButton}>Review</button>
+              <Link href="/officer/expert-reviews" className={styles.reviewButton}>Review</Link>
             </div>
 
             <div className={styles.reviewItem}>
@@ -360,7 +337,7 @@ export default function OfficerPage() {
                 <strong>Grape disease detection</strong>
                 <p>Field Confirmation required</p>
               </div>
-              <button className={styles.reviewButton}>Review</button>
+              <Link href="/officer/expert-reviews" className={styles.reviewButton}>Review</Link>
             </div>
           </article>
         </section>

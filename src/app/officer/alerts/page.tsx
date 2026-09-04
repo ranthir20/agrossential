@@ -1,5 +1,6 @@
 "use client";
 
+import OfficerHeader from "@/components/officer/OfficerHeader";
 import { useState } from "react";
 import Link from "next/link";
 import styles from "./alerts.module.css";
@@ -23,7 +24,7 @@ export default function AlertsPage() {
     {
       id: "ALT-1042",
       title: "Early Blight detected",
-      location: "Patancheeru, Maharashtra",
+      location: "Nashik, Maharashtra",
       crop: "Tomato",
       severity: "HIGH",
       time: "12 minutes ago",
@@ -36,7 +37,7 @@ export default function AlertsPage() {
     {
       id: "ALT-1041",
       title: "Pink Bollworm activity increased",
-      location: "Medak, Maharashtra",
+      location: "Nagpur, Maharashtra",
       crop: "Cotton",
       severity: "HIGH",
       time: "34 minutes ago",
@@ -49,7 +50,7 @@ export default function AlertsPage() {
     {
       id: "ALT-1040",
       title: "Brown Planthopper risk rising",
-      location: "Sangareddy, Maharashtra",
+      location: "Pune, Maharashtra",
       crop: "Rice",
       severity: "MEDIUM",
       time: "1 hour ago",
@@ -62,7 +63,7 @@ export default function AlertsPage() {
     {
       id: "ALT-1039",
       title: "Fall Armyworm reported",
-      location: "Narsapur, Maharashtra",
+      location: "Satara, Maharashtra",
       crop: "Maize",
       severity: "HIGH",
       time: "2 hours ago",
@@ -167,33 +168,7 @@ export default function AlertsPage() {
 
   return (
     <main className={styles.page}>
-      <header className={styles.topbar}>
-        <Link href="/officer" className={styles.brand}>
-          <span className={styles.logo}>🌱</span>
-          <span>agrossential</span>
-        </Link>
-
-        <nav className={styles.nav}>
-          <Link href="/officer">Dashboard</Link>
-          <Link href="/officer/farms">Farms</Link>
-          <Link href="/officer/disease-map">Disease Map</Link>
-          <Link href="/officer/alerts" className={styles.activeNav}>
-            Alerts
-          </Link>
-          <Link href="/officer/analytics">Analytics</Link>
-          <Link href="/officer/expert-reviews">Expert Reviews</Link>
-          <Link href="/officer/reports">Reports</Link>
-        </nav>
-
-        <div className={styles.profile}>
-          <div>
-            <strong>Agricultural Officer</strong>
-            <span>Maharashtra Region</span>
-          </div>
-
-          <div className={styles.avatar}>AO</div>
-        </div>
-      </header>
+      <OfficerHeader />
 
       <section className={styles.content}>
         <div className={styles.hero}>

@@ -1,0 +1,481 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import styles from "./alerts.module.css";
+
+type Alert = {
+  id: string;
+  title: string;
+  location: string;
+  crop: string;
+  severity: "HIGH" | "MEDIUM" | "LOW";
+  time: string;
+  confidence: string;
+  review: string;
+  confirmation: string;
+  type: "Disease" | "Pest";
+  status: "Active" | "Acknowledged" | "Field Check Requested" | "Resolved";
+};
+
+export default function AlertsPage() {
+  const [alerts, setAlerts] = useState<Alert[]>([
+    {
+      id: "ALT-1042",
+      title: "Early Blight detected",
+      location: "Nashik, Maharashtra",
+      crop: "Tomato",
+      severity: "HIGH",
+      time: "12 minutes ago",
+      confidence: "94%",
+      review: "Pending Expert Review",
+      confirmation: "Awaiting field confirmation",
+      type: "Disease",
+      status: "Active",
+    },
+    {
+      id: "ALT-1041",
+      title: "Pink Bollworm activity increased",
+      location: "Nagpur, Maharashtra",
+      crop: "Cotton",
+      severity: "HIGH",
+      time: "34 minutes ago",
+      confidence: "91%",
+      review: "Expert Reviewed",
+      confirmation: "Field Confirmed",
+      type: "Pest",
+      status: "Active",
+    },
+    {
+      id: "ALT-1040",
+      title: "Brown Planthopper risk rising",
+      location: "Pune, Maharashtra",
+      crop: "Rice",
+      severity: "MEDIUM",
+      time: "1 hour ago",
+      confidence: "87%",
+      review: "Pending Expert Review",
+      confirmation: "Field team assigned",
+      type: "Pest",
+      status: "Acknowledged",
+    },
+    {
+      id: "ALT-1039",
+      title: "Fall Armyworm reported",
+      location: "Satara, Maharashtra",
+      crop: "Maize",
+      severity: "HIGH",
+      time: "2 hours ago",
+      confidence: "96%",
+      review: "Expert Reviewed",
+      confirmation: "Field Confirmed",
+      type: "Pest",
+      status: "Active",
+    },
+    {
+      id: "ALT-1038",
+      title: "Downy Mildew risk",
+      location: "Pune, Maharashtra",
+      crop: "Grapes",
+      severity: "LOW",
+      time: "4 hours ago",
+      confidence: "78%",
+      review: "AI Monitoring",
+      confirmation: "No field visit required",
+      type: "Disease",
+      status: "Active",
+    },
+  ]);
+
+  const [selectedFilter, setSelectedFilter] = useState("All Alerts");
+  const [search, setSearch] = useState("");
+  const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
+
+  const filteredAlerts = alerts.filter((alert) => {
+    const searchText = search.toLowerCase();
+
+    const matchesSearch =
+      alert.location.toLowerCase().includes(searchText) ||
+      alert.crop.toLowerCase().includes(searchText) ||
+      alert.title.toLowerCase().includes(searchText) ||
+      alert.type.toLowerCase().includes(searchText);
+
+    let matchesFilter = true;
+
+    if (selectedFilter === "High Severity") {
+      matchesFilter = alert.severity === "HIGH";
+    }
+
+    if (selectedFilter === "Diseases") {
+      matchesFilter = alert.type === "Disease";
+    }
+
+    if (selectedFilter === "Pests") {
+      matchesFilter = alert.type === "Pest";
+    }
+
+    return matchesSearch && matchesFilter;
+  });
+
+  const updateAlertStatus = (
+    id: string,
+    status: Alert["status"],
+    confirmation?: string
+  ) => {
+    setAlerts((currentAlerts) =>
+      currentAlerts.map((alert) =>
+        alert.id === id
+          ? {
+              ...alert,
+              status,
+              confirmation: confirmation ?? alert.confirmation,
+            }
+          : alert
+      )
+    );
+
+    setSelectedAlert((currentAlert) =>
+      currentAlert && currentAlert.id === id
+        ? {
+            ...currentAlert,
+            status,
+            confirmation: confirmation ?? currentAlert.confirmation,
+          }
+        : currentAlert
+    );
+  };
+
+  const activeCount = alerts.filter(
+    (alert) => alert.status !== "Resolved"
+  ).length;
+
+  const highCount = alerts.filter(
+    (alert) =>
+      alert.severity === "HIGH" &&
+      alert.status !== "Resolved"
+  ).length;
+
+  const pendingReviewCount = alerts.filter(
+    (alert) =>
+      alert.review === "Pending Expert Review" &&
+      alert.status !== "Resolved"
+  ).length;
+
+  const fieldConfirmedCount = alerts.filter(
+    (alert) => alert.confirmation === "Field Confirmed"
+  ).length;
+
+  return (
+    <main className={styles.page}>
+      <header className={styles.topbar}>
+        <Link href="/officer" className={styles.brand}>
+          <span className={styles.logo}>🌱</span>
+          <span>agrossential</span>
+        </Link>
+
+        <nav className={styles.nav}>
+          <Link href="/officer">Dashboard</Link>
+          <Link href="/officer/farms">Farms</Link>
+          <Link href="/officer/disease-map">Disease Map</Link>
+          <Link href="/officer/alerts" className={styles.activeNav}>
+            Alerts
+          </Link>
+          <Link href="/officer/analytics">Analytics</Link>
+          <Link href="/officer/expert-reviews">Expert Reviews</Link>
+          <Link href="/officer/confirmation">Field Confirmation</Link>
+          <Link href="/officer/reports">Reports</Link>
+        </nav>
+
+        <div className={styles.profile}>
+          <div>
+            <strong>Agricultural Officer</strong>
+            <span>Maharashtra Region</span>
+          </div>
+
+          <div className={styles.avatar}>AO</div>
+        </div>
+      </header>
+
+      <section className={styles.content}>
+        <div className={styles.hero}>
+          <div>
+            <p className={styles.eyebrow}>MONITORING & RESPONSE CENTER</p>
+
+            <h1>Alerts</h1>
+
+            <p className={styles.subtitle}>
+              Monitor disease outbreaks, pest activity and high-risk agricultural areas.
+            </p>
+          </div>
+
+          <button
+            className={styles.primaryButton}
+            onClick={() => alert("New alert creation will be connected to the backend.")}
+          >
+            + Create Alert
+          </button>
+        </div>
+
+        <section className={styles.filters}>
+          <span className={styles.filterLabel}>Filter:</span>
+
+          {[
+            "All Alerts",
+            "High Severity",
+            "Diseases",
+            "Pests",
+            "Last 7 Days",
+          ].map((filter) => (
+            <button
+              key={filter}
+              className={
+                selectedFilter === filter
+                  ? styles.selectedFilter
+                  : styles.filterButton
+              }
+              onClick={() => setSelectedFilter(filter)}
+            >
+              {filter}
+            </button>
+          ))}
+        </section>
+
+        <section className={styles.stats}>
+          <article className={styles.statCard}>
+            <span className={styles.statIcon}>🚨</span>
+            <p>ACTIVE ALERTS</p>
+            <h2>{activeCount}</h2>
+            <span>Currently requiring monitoring</span>
+          </article>
+
+          <article className={styles.statCard}>
+            <span className={styles.statIcon}>🔴</span>
+            <p>HIGH SEVERITY</p>
+            <h2>{highCount}</h2>
+            <span>Requires immediate attention</span>
+          </article>
+
+          <article className={styles.statCard}>
+            <span className={styles.statIcon}>🤖</span>
+            <p>PENDING EXPERT REVIEW</p>
+            <h2>{pendingReviewCount}</h2>
+            <span>Awaiting validation</span>
+          </article>
+
+          <article className={styles.statCard}>
+            <span className={styles.statIcon}>🌾</span>
+            <p>FIELD CONFIRMATIONS</p>
+            <h2>{fieldConfirmedCount}</h2>
+            <span>Confirmed from the field</span>
+          </article>
+        </section>
+
+        <section className={styles.alertSection}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <h2>Recent Alerts</h2>
+              <p>Latest AI-generated and field-reported agricultural risks</p>
+            </div>
+
+            <input
+              className={styles.search}
+              placeholder="Search district, crop or disease..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          <div className={styles.alertList}>
+            {filteredAlerts.map((alertItem) => (
+              <article
+                className={styles.alertCard}
+                key={alertItem.id}
+              >
+                <div className={styles.alertMain}>
+                  <div className={styles.alertIcon}>
+                    {alertItem.type === "Disease" ? "🦠" : "🐛"}
+                  </div>
+
+                  <div className={styles.alertInfo}>
+                    <div className={styles.titleRow}>
+                      <h3>{alertItem.title}</h3>
+
+                      <span
+                        className={`${styles.badge} ${
+                          alertItem.severity === "HIGH"
+                            ? styles.high
+                            : alertItem.severity === "MEDIUM"
+                            ? styles.medium
+                            : styles.low
+                        }`}
+                      >
+                        {alertItem.severity}
+                      </span>
+                    </div>
+
+                    <p className={styles.location}>
+                      📍 {alertItem.location}
+                    </p>
+
+                    <div className={styles.meta}>
+                      <span>{alertItem.crop}</span>
+                      <span>{alertItem.type}</span>
+                      <span>{alertItem.time}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.statusArea}>
+                  <div className={styles.statusItem}>
+                    <span>AI Confidence</span>
+                    <strong>{alertItem.confidence}</strong>
+                  </div>
+
+                  <div className={styles.statusItem}>
+                    <span>Expert Review</span>
+                    <strong>{alertItem.review}</strong>
+                  </div>
+
+                  <div className={styles.statusItem}>
+                    <span>Field Confirmation</span>
+                    <strong>{alertItem.confirmation}</strong>
+                  </div>
+
+                  <div className={styles.statusItem}>
+                    <span>Alert Status</span>
+                    <strong>{alertItem.status}</strong>
+                  </div>
+
+                  <button
+                    className={styles.viewButton}
+                    onClick={() => setSelectedAlert(alertItem)}
+                  >
+                    View Details →
+                  </button>
+                </div>
+              </article>
+            ))}
+
+            {filteredAlerts.length === 0 && (
+              <p className={styles.noAlerts}>
+                No alerts found matching your search or filter.
+              </p>
+            )}
+          </div>
+        </section>
+      </section>
+
+      {selectedAlert && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setSelectedAlert(null)}
+        >
+          <div
+            className={styles.modal}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className={styles.closeButton}
+              onClick={() => setSelectedAlert(null)}
+            >
+              ×
+            </button>
+
+            <p className={styles.modalId}>
+              {selectedAlert.id}
+            </p>
+
+            <h2>{selectedAlert.title}</h2>
+
+            <p className={styles.modalSubtitle}>
+              Detailed agricultural risk information and response actions.
+            </p>
+
+            <div className={styles.modalGrid}>
+              <div>
+                <span>Location</span>
+                <strong>{selectedAlert.location}</strong>
+              </div>
+
+              <div>
+                <span>Crop</span>
+                <strong>{selectedAlert.crop}</strong>
+              </div>
+
+              <div>
+                <span>Type</span>
+                <strong>{selectedAlert.type}</strong>
+              </div>
+
+              <div>
+                <span>Severity</span>
+                <strong>{selectedAlert.severity}</strong>
+              </div>
+
+              <div>
+                <span>AI Confidence</span>
+                <strong>{selectedAlert.confidence}</strong>
+              </div>
+
+              <div>
+                <span>Alert Status</span>
+                <strong>{selectedAlert.status}</strong>
+              </div>
+
+              <div>
+                <span>Expert Review</span>
+                <strong>{selectedAlert.review}</strong>
+              </div>
+
+              <div>
+                <span>Field Confirmation</span>
+                <strong>{selectedAlert.confirmation}</strong>
+              </div>
+            </div>
+
+            <div className={styles.modalActions}>
+              <button
+                className={styles.acknowledgeButton}
+                onClick={() =>
+                  updateAlertStatus(
+                    selectedAlert.id,
+                    "Acknowledged"
+                  )
+                }
+              >
+                👀 Acknowledge
+              </button>
+
+              <button
+                className={styles.fieldButton}
+                onClick={() =>
+                  updateAlertStatus(
+                    selectedAlert.id,
+                    "Field Check Requested",
+                    "Field inspection requested"
+                  )
+                }
+              >
+                📍 Request Field Check
+              </button>
+
+              <button
+                className={styles.resolveButton}
+                onClick={() => {
+                  updateAlertStatus(
+                    selectedAlert.id,
+                    "Resolved",
+                    "Response completed"
+                  );
+                  setSelectedAlert(null);
+                }}
+              >
+                ✓ Resolve Alert
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
+  );
+}

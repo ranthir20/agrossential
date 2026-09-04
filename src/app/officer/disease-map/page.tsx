@@ -1,5 +1,6 @@
 "use client";
 
+import OfficerHeader from "@/components/officer/OfficerHeader";
 import Link from "next/link";
 import styles from "./disease-map.module.css";
 
@@ -41,32 +42,7 @@ const hotspots = [
 export default function DiseaseMapPage() {
   return (
     <main className={styles.page}>
-      <header className={styles.header}>
-        <Link href="/officer" className={styles.logo}>
-          🌱 <span>agrossential</span>
-        </Link>
-
-        <nav className={styles.nav}>
-          <Link href="/officer">Dashboard</Link>
-          <Link href="/officer/farms">Farms</Link>
-          <Link href="/officer/disease-map" className={styles.active}>
-            Disease Map
-          </Link>
-          <Link href="/officer/alerts">Alerts</Link>
-          <Link href="/officer/analytics">Analytics</Link>
-          <Link href="/officer/expert-reviews">Expert Reviews</Link>
-          <Link href="/officer/reports">Reports</Link>
-        </nav>
-
-        <div className={styles.profile}>
-          <div>
-            <strong>Agricultural Officer</strong>
-            <span>Maharashtra Region</span>
-          </div>
-
-          <div className={styles.avatar}>AO</div>
-        </div>
-      </header>
+      <OfficerHeader />
 
       <section className={styles.content}>
         <div className={styles.titleRow}>
