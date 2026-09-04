@@ -16,6 +16,8 @@ type Scan = {
   date: string;
   confidence?: number;
   disease?: string;
+  status?: string;
+  detectedCrop?: string;
   severity?: string;
 };
 
@@ -29,6 +31,7 @@ const demoHistory: Scan[] = [
     image: "",
     date: new Date(Date.now() - 86400000).toISOString(),
     confidence: 87,
+    status: "Diseased",
     disease: "Cotton Leaf Curl Virus",
     severity: "Moderate",
   },
@@ -41,6 +44,7 @@ const demoHistory: Scan[] = [
     image: "",
     date: new Date(Date.now() - 3 * 86400000).toISOString(),
     confidence: 64,
+    status: "Diseased",
     disease: "Possible Leaf Spot",
     severity: "Low",
   },
@@ -72,8 +76,8 @@ export default function HistoryPage() {
           {
             ...parsed,
             confidence: parsed.confidence ?? 87,
-            disease: parsed.disease ?? "Cotton Leaf Curl Virus",
-            severity: parsed.severity ?? "Moderate",
+            disease: parsed.disease ?? (parsed.status === "Healthy" ? "Healthy (No Disease)" : "Cotton Leaf Curl Virus"),
+            status: parsed.status ?? "Diseased",
           },
           ...demoHistory,
         ]);
@@ -227,14 +231,19 @@ export default function HistoryPage() {
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
                             <h2 className="font-bold text-gray-900">
-                              {scan.disease || "Analysis Pending"}
+                              {scan.status === "Healthy"
+                                ? "Healthy (No Disease)"
+                                : scan.disease || "Analysis Pending"}
                             </h2>
 
                             <span
-                              className={`rounded-full px-2.5 py-1 text-xs font-bold ${getConfidenceStyle(
-                                confidence,
-                              )}`}
+                              className={`rounded-full px-2.5 py-1 text-xs font-bold ${
+                                scan.status === "Healthy"
+                                  ? "bg-green-100 text-green-700"
+                                  : getConfidenceStyle(confidence)
+                              }`}
                             >
+                              {scan.status === "Healthy" ? "Healthy · " : ""}
                               {confidence}% ·{" "}
                               {getConfidenceLabel(confidence)}
                             </span>
@@ -270,9 +279,9 @@ export default function HistoryPage() {
 
                     <div className="mt-4 grid grid-cols-1 gap-3 border-t border-gray-100 pt-4 sm:grid-cols-3">
                       <div>
-                        <p className="text-xs text-gray-500">Severity</p>
+                        <p className="text-xs text-gray-500">Status</p>
                         <p className="mt-1 text-sm font-semibold text-gray-900">
-                          {scan.severity || "Not assessed"}
+                          {scan.status || scan.severity || "Analyzed"}
                         </p>
                       </div>
 

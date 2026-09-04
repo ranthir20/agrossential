@@ -1,0 +1,132 @@
+{
+    "Apple Scab Leaf": {
+        "crop": "Apple",
+        "status": "Diseased",
+        "disease": "Apple Scab"
+    },
+    "Apple leaf": {
+        "crop": "Apple",
+        "status": "Healthy",
+        "disease": "None"
+    },
+    "Apple rust leaf": {
+        "crop": "Apple",
+        "status": "Diseased",
+        "disease": "Apple Rust"
+    },
+    "Bell_pepper leaf": {
+        "crop": "Bell Pepper",
+        "status": "Healthy",
+        "disease": "None"
+    },
+    "Bell_pepper leaf spot": {
+        "crop": "Bell Pepper",
+        "status": "Diseased",
+        "disease": "Leaf Spot"
+    },
+    "Blueberry leaf": {
+        "crop": "Blueberry",
+        "status": "Healthy",
+        "disease": "None"
+    },
+    "Cherry leaf": {
+        "crop": "Cherry",
+        "status": "Healthy",
+        "disease": "None"
+    },
+    "Corn Gray leaf spot": {
+        "crop": "Corn",
+        "status": "Diseased",
+        "disease": "Gray Leaf Spot"
+    },
+    "Corn leaf blight": {
+        "crop": "Corn",
+        "status": "Diseased",
+        "disease": "Leaf Blight"
+    },
+    "Corn rust leaf": {
+        "crop": "Corn",
+        "status": "Diseased",
+        "disease": "Corn Rust"
+    },
+    "Peach leaf": {
+        "crop": "Peach",
+        "status": "Healthy",
+        "disease": "None"
+    },
+    "Potato leaf early blight": {
+        "crop": "Potato",
+        "status": "Diseased",
+        "disease": "Early Blight"
+    },
+    "Potato leaf late blight": {
+        "crop": "Potato",
+        "status": "Diseased",
+        "disease": "Late Blight"
+    },
+    "Raspberry leaf": {
+        "crop": "Raspberry",
+        "status": "Healthy",
+        "disease": "None"
+    },
+    "Squash Powdery mildew leaf": {
+        "crop": "Squash",
+        "status": "Diseased",
+        "disease": "Powdery Mildew"
+    },
+    "Strawberry leaf": {
+        "crop": "Strawberry",
+        "status": "Healthy",
+        "disease": "None"
+    },
+    "Tomato Early blight leaf": {
+        "crop": "Tomato",
+        "status": "Diseased",
+        "disease": "Early Blight"
+    },
+    "Tomato Septoria leaf spot": {
+        "crop": "Tomato",
+        "status": "Diseased",
+        "disease": "Septoria Leaf Spot"
+    },
+    "Tomato leaf": {
+        "crop": "Tomato",
+        "status": "Healthy",
+        "disease": "None"
+    },
+    "Tomato leaf bacterial spot": {
+        "crop": "Tomato",
+        "status": "Diseased",
+        "disease": "Bacterial Spot"
+    },
+    "Tomato leaf late blight": {
+        "crop": "Tomato",
+        "status": "Diseased",
+        "disease": "Late Blight"
+    },
+    "Tomato leaf mosaic virus": {
+        "crop": "Tomato",
+        "status": "Diseased",
+        "disease": "Mosaic Virus"
+    },
+    "Tomato leaf yellow virus": {
+        "crop": "Tomato",
+        "status": "Diseased",
+        "disease": "Yellow Leaf Curl Virus"
+    },
+    "Tomato mold leaf": {
+        "crop": "Tomato",
+        "status": "Diseased",
+        "disease": "Leaf Mold"
+    },
+    "grape leaf": {
+        "crop": "Grape",
+        "status": "Healthy",
+        "disease": "None"
+    },
+    "grape leaf black rot": {
+        "crop": "Grape",
+        "status": "Diseased",
+        "disease": "Black Rot"
+    }
+}

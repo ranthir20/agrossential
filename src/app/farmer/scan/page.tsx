@@ -59,6 +59,7 @@ export default function ScanPage() {
   const [selectedCropIndex, setSelectedCropIndex] = useState("0");
   const [image, setImage] = useState<string | null>(null);
   const [fileName, setFileName] = useState("");
+  const [fileObject, setFileObject] = useState<File | null>(null);
   const [notes, setNotes] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
@@ -97,6 +98,7 @@ export default function ScanPage() {
     }
 
     setFileName(file.name);
+    setFileObject(file);
 
     const reader = new FileReader();
 
@@ -110,9 +112,10 @@ export default function ScanPage() {
   function removeImage() {
     setImage(null);
     setFileName("");
+    setFileObject(null);
   }
 
-  function handleAnalyze() {
+  async function handleAnalyze() {
     if (!selectedFarm || !selectedCrop) {
       alert("Please select a farm and crop.");
       return;
@@ -125,26 +128,63 @@ export default function ScanPage() {
 
     setIsAnalyzing(true);
 
-    const scanData = {
-      id: `scan-${Date.now()}`,
-      farmId: selectedFarm.id,
-      farmName: selectedFarm.name,
-      crop: selectedCrop.name,
-      variety: selectedCrop.variety,
-      image,
-      fileName,
-      notes,
-      date: new Date().toISOString(),
-    };
+    try {
+      const formData = new FormData();
+      if (fileObject) {
+        formData.append("file", fileObject, fileName || "crop_image.jpg");
+      } else {
+        const res = await fetch(image);
+        const blob = await res.blob();
+        formData.append("file", blob, fileName || "crop_image.jpg");
+      }
 
-    localStorage.setItem(
-      "agrossential-current-scan",
-      JSON.stringify(scanData)
-    );
+      const apiRes = await fetch("http://localhost:8000/predict", {
+        method: "POST",
+        body: formData,
+      });
 
-    setTimeout(() => {
+      if (!apiRes.ok) {
+        const err = await apiRes.json().catch(() => null);
+        throw new Error(err?.detail || `API error: ${apiRes.status}`);
+      }
+
+      const prediction = await apiRes.json();
+
+      const scanData = {
+        id: `scan-${Date.now()}`,
+        farmId: selectedFarm.id,
+        farmName: selectedFarm.name,
+        crop: selectedCrop.name,
+        variety: selectedCrop.variety,
+        image,
+        fileName,
+        notes,
+        date: new Date().toISOString(),
+        // ML prediction results
+        detectedCrop: prediction.crop,
+        status: prediction.status,
+        disease: prediction.disease,
+        confidence: prediction.confidence,
+        confidenceLevel: prediction.confidenceLevel,
+        confidenceInterpretation: prediction.confidenceInterpretation,
+        top3: prediction.top3,
+        rawClass: prediction.rawClass,
+      };
+
+      localStorage.setItem(
+        "agrossential-current-scan",
+        JSON.stringify(scanData)
+      );
+
       router.push("/farmer/results");
-    }, 1200);
+    } catch (error) {
+      console.error("Prediction failed:", error);
+      alert(
+        `Could not analyze the image. Make sure the backend is running.\n\nError: ${error instanceof Error ? error.message : "Unknown error"}`
+      );
+    } finally {
+      setIsAnalyzing(false);
+    }
   }
 
   return (
@@ -372,6 +412,18 @@ export default function ScanPage() {
                   fileName: "Demo crop scan",
                   notes: "Demo scan for testing the agrossential frontend.",
                   date: new Date().toISOString(),
+                  detectedCrop: selectedCrop.name,
+                  status: "Diseased",
+                  disease: "Leaf Spot",
+                  confidence: 84.5,
+                  confidenceLevel: "high",
+                  confidenceInterpretation: "High confidence",
+                  top3: [
+                    { rank: 1, class: `${selectedCrop.name} leaf spot`, confidence: 84.5 },
+                    { rank: 2, class: `${selectedCrop.name} leaf`, confidence: 10.2 },
+                    { rank: 3, class: "Tomato Septoria leaf spot", confidence: 3.1 },
+                  ],
+                  rawClass: `${selectedCrop.name} leaf spot`,
                 };
 
                 localStorage.setItem(
