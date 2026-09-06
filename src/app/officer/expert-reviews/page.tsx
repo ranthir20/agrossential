@@ -53,12 +53,16 @@ type Filter =
       name: string;
     } | null;
     DiseaseReport: {
+      imageUrl: string | null;
       predictedDisease: string;
       confidence: number | null;
       Crop: {
         crop: string;
+        variety: string | null;
+        growthStage: string | null;
         Farm: {
           farmName: string;
+          village: string | null;
           district: string | null;
           state: string | null;
         };

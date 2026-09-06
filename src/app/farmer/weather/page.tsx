@@ -25,7 +25,7 @@ const forecast = [
 
 export default function WeatherPage() {
   return (
-    <main className="min-h-screen w-full overflow-x-hidden bg-gray-50">
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden w-full overflow-x-hidden bg-gray-50">
       <FarmerHeader />
 
       <div className="w-full px-4 py-6 sm:px-6 lg:px-8 xl:px-12">

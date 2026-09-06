@@ -45,7 +45,7 @@ export default function ResultsPage() {
 
   if (!scan) {
     return (
-      <main className="min-h-screen bg-gray-50">
+      <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-gray-50">
         <FarmerHeader />
 
         <div className="px-4 py-12 text-center">
@@ -98,10 +98,10 @@ export default function ResultsPage() {
   }
 
   return (
-    <main className="min-h-screen w-full overflow-x-hidden bg-gray-50">
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden w-full overflow-x-hidden bg-gray-50">
       <FarmerHeader />
 
-      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="w-full max-w-none px-4 py-6 sm:px-6 lg:px-8">
         <Link
           href="/farmer/scan"
           className="text-sm font-medium text-green-700 hover:underline"
@@ -342,28 +342,30 @@ export default function ResultsPage() {
               )}
             </div>
 
-            <div className="mt-4 space-y-2 text-sm">
-              <p>
-                <span className="text-gray-500">Farm:</span>{" "}
-                <span className="font-semibold text-gray-900">
-                  {scan.farmName}
-                </span>
-              </p>
+            {scan.farmName && scan.crop && (
+              <div className="mt-4 space-y-2 text-sm">
+                <p>
+                  <span className="text-gray-500">Farm:</span>{" "}
+                  <span className="font-semibold text-gray-900">
+                    {scan.farmName}
+                  </span>
+                </p>
 
-              <p>
-                <span className="text-gray-500">Crop:</span>{" "}
-                <span className="font-semibold text-gray-900">
-                  {scan.crop}
-                </span>
-              </p>
+                <p>
+                  <span className="text-gray-500">Crop:</span>{" "}
+                  <span className="font-semibold text-gray-900">
+                    {scan.crop}
+                  </span>
+                </p>
 
-              <p>
-                <span className="text-gray-500">Variety:</span>{" "}
-                <span className="font-semibold text-gray-900">
-                  {scan.variety || "Not specified"}
-                </span>
-              </p>
-            </div>
+                <p>
+                  <span className="text-gray-500">Variety:</span>{" "}
+                  <span className="font-semibold text-gray-900">
+                    {scan.variety || "Not specified"}
+                  </span>
+                </p>
+              </div>
+            )}
           </section>
 
           {/* Analysis */}

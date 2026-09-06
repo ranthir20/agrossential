@@ -123,10 +123,10 @@ export default function InboxPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden w-full overflow-x-hidden bg-slate-50">
       <FarmerHeader />
 
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-none px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-semibold text-green-700">Inbox</p>

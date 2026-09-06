@@ -106,7 +106,7 @@ export default function FarmDetailsPage() {
 
   if (!farm) {
     return (
-      <main className="min-h-screen bg-gray-50">
+      <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-gray-50">
         <FarmerHeader />
 
         <div className="px-4 py-10 text-center">
@@ -130,7 +130,7 @@ export default function FarmDetailsPage() {
   }
 
   return (
-    <main className="min-h-screen w-full overflow-x-hidden bg-gray-50">
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden w-full overflow-x-hidden bg-gray-50">
       <FarmerHeader />
 
       <div className="w-full px-4 py-6 sm:px-6 lg:px-8 xl:px-12">

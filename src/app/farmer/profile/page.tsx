@@ -78,17 +78,17 @@ export default function ProfilePage() {
 
   if (!loaded) {
     return (
-      <main className="min-h-screen bg-slate-50">
+      <main className="min-h-screen w-full max-w-full overflow-x-hidden w-full overflow-x-hidden bg-slate-50">
         <FarmerHeader />
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden w-full overflow-x-hidden bg-slate-50">
       <FarmerHeader />
 
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-none px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
           <p className="text-sm font-semibold text-green-700">
             Farmer Profile

@@ -58,10 +58,10 @@ export default function HelpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50">
       <FarmerHeader />
 
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-none px-4 py-8 sm:px-6 lg:px-8">
         <Link
           href="/farmer/dashboard"
           className="text-sm font-medium text-green-700 hover:text-green-800"

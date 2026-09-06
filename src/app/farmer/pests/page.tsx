@@ -134,10 +134,10 @@ export default function PestReportPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden w-full overflow-x-hidden bg-gray-50">
       <FarmerHeader />
 
-      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="w-full max-w-none px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-6">
           <Link
             href="/farmer/dashboard"

@@ -67,8 +67,8 @@ export default function AddFarmPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-3xl">
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden w-full overflow-x-hidden bg-gray-50 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-none">
         <Link
           href="/farmer/farms"
           className="text-sm font-medium text-green-700 hover:underline"
@@ -81,11 +81,11 @@ export default function AddFarmPage() {
             Add New Farm
           </h1>
 
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-gray-900">
             Add your farm and crop details to start monitoring crop health.
           </p>
 
-          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          <form onSubmit={handleSubmit} className="mt-8 space-y-6 text-gray-900">
             {/* Farm Information */}
             <div>
               <h2 className="text-lg font-bold text-gray-900">
@@ -94,7 +94,7 @@ export default function AddFarmPage() {
 
               <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div className="sm:col-span-2">
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-gray-900">
                     Farm Name *
                   </label>
 
@@ -104,12 +104,12 @@ export default function AddFarmPage() {
                     onChange={(e) => setFarmName(e.target.value)}
                     type="text"
                     placeholder="e.g. North Farm"
-                    className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:border-green-500"
+                    className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 outline-none focus:border-green-500"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-gray-900">
                     Village *
                   </label>
 
@@ -119,12 +119,12 @@ export default function AddFarmPage() {
                     onChange={(e) => setVillage(e.target.value)}
                     type="text"
                     placeholder="Village name"
-                    className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:border-green-500"
+                    className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 outline-none focus:border-green-500"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-gray-900">
                     District *
                   </label>
 
@@ -134,19 +134,19 @@ export default function AddFarmPage() {
                     onChange={(e) => setDistrict(e.target.value)}
                     type="text"
                     placeholder="e.g. Nashik"
-                    className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:border-green-500"
+                    className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 outline-none focus:border-green-500"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-gray-900">
                     State *
                   </label>
 
                   <select
                     value={state}
                     onChange={(e) => setState(e.target.value)}
-                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 outline-none focus:border-green-500"
+                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-500"
                   >
                     <option>Maharashtra</option>
                     <option>Telangana</option>
@@ -159,7 +159,7 @@ export default function AddFarmPage() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-gray-900">
                     Farm Area *
                   </label>
 
@@ -177,7 +177,7 @@ export default function AddFarmPage() {
                     <select
                       value={areaUnit}
                       onChange={(e) => setAreaUnit(e.target.value)}
-                      className="rounded-xl border border-gray-200 bg-white px-4 py-3 outline-none"
+                      className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none"
                     >
                       <option>Acres</option>
                       <option>Hectares</option>
@@ -195,7 +195,7 @@ export default function AddFarmPage() {
 
               <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-gray-900">
                     Crop *
                   </label>
 
@@ -203,7 +203,7 @@ export default function AddFarmPage() {
                     required
                     value={crop}
                     onChange={(e) => setCrop(e.target.value)}
-                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 outline-none focus:border-green-500"
+                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-500"
                   >
                     <option value="">Select crop</option>
                     <option value="Cotton">Cotton</option>
@@ -218,7 +218,7 @@ export default function AddFarmPage() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-gray-900">
                     Variety *
                   </label>
 
@@ -228,12 +228,12 @@ export default function AddFarmPage() {
                     onChange={(e) => setVariety(e.target.value)}
                     type="text"
                     placeholder="e.g. Bt Cotton"
-                    className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:border-green-500"
+                    className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 outline-none focus:border-green-500"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-gray-900">
                     Sowing Date *
                   </label>
 
@@ -242,7 +242,7 @@ export default function AddFarmPage() {
                     value={sowingDate}
                     onChange={(e) => setSowingDate(e.target.value)}
                     type="date"
-                    className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:border-green-500"
+                    className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 outline-none focus:border-green-500"
                   />
                 </div>
               </div>
@@ -256,14 +256,14 @@ export default function AddFarmPage() {
 
               <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-gray-900">
                     Soil Type
                   </label>
 
                   <select
                     value={soil}
                     onChange={(e) => setSoil(e.target.value)}
-                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 outline-none focus:border-green-500"
+                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-500"
                   >
                     <option value="">Select soil type</option>
                     <option>Black Soil</option>
@@ -277,14 +277,14 @@ export default function AddFarmPage() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-gray-900">
                     Irrigation Method
                   </label>
 
                   <select
                     value={irrigation}
                     onChange={(e) => setIrrigation(e.target.value)}
-                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 outline-none focus:border-green-500"
+                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-500"
                   >
                     <option value="">Select irrigation</option>
                     <option>Drip Irrigation</option>

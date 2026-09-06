@@ -88,27 +88,24 @@ export default function ExpertReviewPage() {
   };
 
   useEffect(() => {
-    const currentScan =
-      localStorage.getItem(
-        "agrossential-current-scan"
-      );
+    const currentScan = localStorage.getItem(
+      "agrossential-current-scan"
+    );
 
     if (currentScan) {
       try {
-        const parsed =
-          JSON.parse(currentScan);
+        const parsed = JSON.parse(currentScan);
 
-        if (parsed?.id) {
-          setReportId(parsed.id);
-        } else if (
-          parsed?.reportId
-        ) {
-          setReportId(
-            parsed.reportId
+        if (parsed?.reportId) {
+          setReportId(parsed.reportId);
+        } else {
+          setReportId("");
+          setError(
+            "No database disease report is linked to this scan. Please run a new My Farm scan first."
           );
         }
       } catch {
-        setReportId(currentScan);
+        setReportId("");
       }
     }
 
@@ -183,10 +180,10 @@ export default function ExpertReviewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-slate-50">
       <FarmerHeader />
 
-      <main className="mx-auto w-full max-w-6xl px-6 py-10">
+      <main className="w-full max-w-none px-6 py-10">
         <div className="mb-8">
           <p className="text-sm font-bold tracking-wide text-green-700">
             AGRICULTURAL EXPERT SUPPORT

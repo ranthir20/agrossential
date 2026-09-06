@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import FarmerHeader from "@/components/farmer/FarmerHeader";
 
 type Crop = {
+  id?: string;
   name: string;
   variety: string;
   sowingDate?: string;
@@ -27,6 +28,7 @@ const defaultFarms: Farm[] = [
     location: "Nashik, Maharashtra",
     crops: [
       {
+        id: "f50175c1-b03d-46da-a7e7-75ad9c536711",
         name: "Cotton",
         variety: "Bt Cotton",
         sowingDate: "2026-06-15",
@@ -56,6 +58,7 @@ export default function ScanPage() {
 
   const [farms, setFarms] = useState<Farm[]>(defaultFarms);
   const [selectedFarmId, setSelectedFarmId] = useState("");
+  const [scanMode, setScanMode] = useState<"farm" | "other">("farm");
   const [selectedCropIndex, setSelectedCropIndex] = useState("0");
   const [image, setImage] = useState<string | null>(null);
   const [fileName, setFileName] = useState("");
@@ -150,12 +153,43 @@ export default function ScanPage() {
 
       const prediction = await apiRes.json();
 
+      let reportId = "";
+
+      if (scanMode === "farm" && selectedCrop?.id) {
+        const reportRes = await fetch("/api/disease-reports", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            cropId: selectedCrop.id,
+            imageUrl: image,
+            predictedDisease: prediction.disease || "Unknown",
+            confidence:
+              prediction.confidence !== undefined
+                ? Number(prediction.confidence) / 100
+                : null,
+          }),
+        });
+
+        const reportData = await reportRes.json();
+
+        if (!reportRes.ok) {
+          throw new Error(
+            reportData.error || "Failed to create disease report"
+          );
+        }
+
+        reportId = reportData.id;
+      }
+
       const scanData = {
         id: `scan-${Date.now()}`,
-        farmId: selectedFarm.id,
-        farmName: selectedFarm.name,
-        crop: selectedCrop.name,
-        variety: selectedCrop.variety,
+        reportId,
+        farmId: scanMode === "farm" ? selectedFarm.id : "",
+        farmName: scanMode === "farm" ? selectedFarm.name : "",
+        crop: scanMode === "farm" ? selectedCrop.name : "",
+        variety: scanMode === "farm" ? selectedCrop.variety : "",
         image,
         fileName,
         notes,
@@ -191,7 +225,7 @@ export default function ScanPage() {
     <main className="min-h-screen w-full overflow-x-hidden bg-gray-50">
       <FarmerHeader />
 
-      <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-none px-4 py-6 sm:px-6 lg:px-8">
         <Link
           href="/farmer/dashboard"
           className="text-sm font-medium text-green-700 hover:underline"
@@ -231,27 +265,59 @@ export default function ScanPage() {
           </div>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-5">
-          {/* Left - Crop Selection */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-6 lg:col-span-2">
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {/* Scan Type */}
+          <div className="mb-6 w-full rounded-2xl bg-white p-5 shadow-sm lg:col-span-2">
+            <h2 className="text-lg font-bold text-gray-900">Scan Type</h2>
+
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => setScanMode("farm")}
+                className={`rounded-xl border px-4 py-3 font-semibold ${
+                  scanMode === "farm"
+                    ? "border-green-600 bg-green-50 text-green-800"
+                    : "border-gray-300 bg-white text-gray-900"
+                }`}
+              >
+                🌾 My Farm
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setScanMode("other")}
+                className={`rounded-xl border px-4 py-3 font-semibold ${
+                  scanMode === "other"
+                    ? "border-blue-600 bg-blue-50 text-blue-800"
+                    : "border-gray-300 bg-white text-gray-900"
+                }`}
+              >
+                🔎 Other / Quick Scan
+              </button>
+            </div>
+          </div>
+
+          {scanMode === "farm" && (
+            <>
+          <section className="w-full rounded-2xl bg-white p-5 shadow-sm sm:p-6 lg:col-span-2">
             <h2 className="text-lg font-bold text-gray-900">
               Select Farm & Crop
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-black">
               This helps us give farm-specific analysis.
             </p>
 
             <div className="mt-6 space-y-5">
               <div>
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-black">
                   Farm
                 </label>
 
                 <select
                   value={selectedFarmId}
                   onChange={(e) => handleFarmChange(e.target.value)}
-                  className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-green-500"
+                  className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-black outline-none focus:border-green-500"
                 >
                   {farms.map((farm) => (
                     <option key={farm.id} value={farm.id}>
@@ -262,7 +328,7 @@ export default function ScanPage() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-black">
                   Crop
                 </label>
 
@@ -270,7 +336,7 @@ export default function ScanPage() {
                   <select
                     value={selectedCropIndex}
                     onChange={(e) => setSelectedCropIndex(e.target.value)}
-                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-green-500"
+                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-black outline-none focus:border-green-500"
                   >
                     {selectedFarm.crops.map((crop, index) => (
                       <option key={`${crop.name}-${index}`} value={index}>
@@ -291,15 +357,15 @@ export default function ScanPage() {
                     Selected Crop
                   </p>
 
-                  <p className="mt-1 font-bold text-gray-900">
+                  <p className="mt-1 font-bold text-black">
                     🌱 {selectedCrop.name}
                   </p>
 
-                  <p className="mt-1 text-xs text-gray-600">
+                  <p className="mt-1 text-xs text-black">
                     Variety: {selectedCrop.variety}
                   </p>
 
-                  <p className="mt-1 text-xs text-gray-600">
+                  <p className="mt-1 text-xs text-black">
                     Stage: {selectedCrop.stage}
                   </p>
                 </div>
@@ -307,8 +373,11 @@ export default function ScanPage() {
             </div>
           </section>
 
+            </>
+          )}
+
           {/* Right - Image Upload */}
-          <section className="rounded-2xl bg-white p-5 shadow-sm sm:p-6 lg:col-span-3">
+          <section className="w-full rounded-2xl bg-white p-5 shadow-sm sm:p-6 lg:col-span-2">
             <h2 className="text-lg font-bold text-gray-900">
               Upload Crop Image
             </h2>
@@ -339,7 +408,7 @@ export default function ScanPage() {
                   accept="image/*"
                   capture="environment"
                   onChange={handleImageChange}
-                  className="hidden"
+                  className="hidden text-black"
                 />
               </label>
             ) : (
@@ -367,22 +436,6 @@ export default function ScanPage() {
                 </div>
               </div>
             )}
-
-            {/* Notes */}
-            <div className="mt-6">
-              <label className="text-sm font-medium text-gray-700">
-                Symptoms / Additional Notes{" "}
-                <span className="font-normal text-gray-400">(optional)</span>
-              </label>
-
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={3}
-                placeholder="Example: Yellow spots appeared on leaves 3 days ago..."
-                className="mt-2 w-full resize-none rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-green-500"
-              />
-            </div>
 
             {/* Analyze */}
             <button
