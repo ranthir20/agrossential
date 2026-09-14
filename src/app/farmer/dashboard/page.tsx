@@ -36,6 +36,97 @@ const defaultAlerts = [
 
 export default function FarmerDashboard() {
   const [alerts, setAlerts] = useState(defaultAlerts);
+  const [greeting, setGreeting] = useState("Good morning");
+  const [userLocation, setUserLocation] = useState({
+    city: "Detecting...",
+    state: "",
+    country: "",
+  });
+
+  useEffect(() => {
+    const useIpLocation = async () => {
+      try {
+        const response = await fetch("/api/location", {
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          throw new Error("IP location failed");
+        }
+
+        const data = await response.json();
+
+        setUserLocation({
+          city: data.city || "Unknown location",
+          state: data.state || "",
+          country: data.country || "",
+        });
+      } catch {
+        setUserLocation({
+          city: "Location unavailable",
+          state: "",
+          country: "",
+        });
+      }
+    };
+
+    if (!navigator.geolocation) {
+      useIpLocation();
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+          );
+
+          if (!response.ok) {
+            throw new Error("Reverse geocoding failed");
+          }
+
+          const data = await response.json();
+          const address = data.address || {};
+
+          setUserLocation({
+            city:
+              address.city ||
+              address.town ||
+              address.village ||
+              address.municipality ||
+              "Unknown location",
+            state: address.state || "",
+            country: address.country || "",
+          });
+        } catch {
+          useIpLocation();
+        }
+      },
+      () => {
+        useIpLocation();
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000,
+      }
+    );
+  }, []);
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+
+    if (hour < 12) {
+      setGreeting("Good morning");
+    } else if (hour < 17) {
+      setGreeting("Good afternoon");
+    } else {
+      setGreeting("Good evening");
+    }
+  }, []);
 
   useEffect(() => {
     const loadAlerts = () => {
@@ -74,7 +165,7 @@ export default function FarmerDashboard() {
         {/* Welcome */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
-            Good morning, Farmer 👋
+            {greeting}, Farmer 👋
           </h2>
           <p className="mt-2 text-sm text-gray-600 sm:text-base">
             Monitor your farms, detect crop problems early, and get actionable
@@ -95,10 +186,12 @@ export default function FarmerDashboard() {
 
               <div>
                 <h3 className="text-lg font-bold text-gray-900">
-                  Nashik
+                  {userLocation.city}
                 </h3>
                 <p className="text-sm text-gray-500">
-                  Maharashtra, India
+                  {[userLocation.state, userLocation.country]
+                    .filter(Boolean)
+                    .join(", ")}
                 </p>
               </div>
             </div>
